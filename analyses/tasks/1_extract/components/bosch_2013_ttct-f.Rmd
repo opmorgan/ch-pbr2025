@@ -1,0 +1,58 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Bosch, J. (2013). Prenatal testosterone, hemispheric dominance and looseness of associations [PhD Thesis]. Universitätsbibliothek Graz.
+
+51 participants (whatever handedness, measured with the EHI) completed the AUT (modified - one response per item) and TTCT.They do not report any relevant results for the AUT. For the TTCT, they report simple correlation coefficients for Figural Originality (.04), Verbal Originality (.19), and Verbal Fluency (.00). All estimates favor right handers, or neither.
+
+```{r}
+study <- "bosch_2013"
+task <- "TTCT(F)"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+```
+
+```{r}
+es_type <- "rho"
+```
+
+```{r}
+## Load data
+input_filename <- "bosch_2013_ttct-f.csv"
+input_path <- here(extract_dir, "data", "input", input_filename)
+input <- read_csv(input_path)
+## Display data
+pretty_table(input, title = input_filename)
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+unique_n <- input %>% .[["n"]] %>% unique()
+unique_n
+if (length(unique_n == 1)) {
+  n <- unique_n %>% first()
+} else {
+  stop(str_c(study, ", ", task,
+    ": unexpected multiple values for n (total) in input file"))
+}
+
+str_c("n (total): ", n)
+```
+
+```{r}
+measure <- "Originality"
+rho <- input %>% filter(ttct_measure == measure) %>% .[["rho"]]
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

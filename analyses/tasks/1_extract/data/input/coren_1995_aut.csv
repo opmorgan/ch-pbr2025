@@ -1,0 +1,10 @@
+n,handedness,sex,mean,sd
+NA,strong_left,m,32.83,11.27
+NA,mixed_left,m,29.6,10
+NA,mixed_right,m,30.5,8.99
+NA,strong_right,m,29.44,8.98
+NA,strong_left,f,29.56,6.39
+NA,mixed_left,f,25.52,10.03
+NA,mixed_right,f,29.9,8.98
+NA,strong_right,f,28.98,8.42
+556,all,all,NA,NA

@@ -1,0 +1,30 @@
+Quinan, C. (1922). A study of sinistrality and muscle coordination in musicians, iron workers, and others. Archives of Neurology And Psychiatry, 7(3), 352. https://doi.org/10.1001/archneurpsyc.1922.02190090068008
+[[PDF](https://drive.google.com/file/d/1pg5Db0br49DJ47f6UtugeFL_CO5k-KaK/view?usp=sharing)]
+
+This study reports handedness of professional musicians (by instrument), professional machinists, and "old men in a public relief home." (Table 1). The present analysis compares musicians to machinists, who seem an appropriate, relatively age-matched control group.
+
+Handedness is measured as self-reported handedness (left or right). Quinan (1921) explains:
+
+"Method of Testing—Each man was questioned as to his handedness and as to whether he had been a stammerer in childhood or had suffered from other defects of speech. During the interrogation it was borne in mind that left-handedness may be simple or crossed and so the queries were varied to suit individual cases. In this way sinistrals were found who prefer to employ the left hand only in certain activities, and one right-handed sinistrai was found who stated that although he fires a gun from the right shoulder he takes aim with the left eye. Pure sinistrals, of course, make use of the left hand practically in every manipulation. They hold a knife, spoon or pen in the left hand, fire a gun from the left shoulder, and wield various implements with the left arm and hand."
+
+Quinan, C. (1921). Sinistrality in relation to high blood pressure and defects of speech. Archives of Internal Medicine, 27(2), 255–261. https://doi.org/10.1001/archinte.1921.00100080118008
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "quinan_1922"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

@@ -1,0 +1,84 @@
+Götestam, K. O. (1990). Lefthandedness among students of architecture and music. Perceptual and Motor Skills, 70, 1323–1327.
+ [[PDF](https://drive.google.com/file/d/1gTqOsdnZ_ieteXmcj1ENk8zb1PcfKTtE/view?usp=sharing)]
+
+The authors report the frequency of left-handedness among freshman architecture and music students, compared to high school seniors. They calculated handednes from a four item (writing, throwing a ball, threading a needle, and kicking a ball), 3 point scale giving scores from 4 to 12. They defined four handedness categories: "left" (left hand on all items), "left mixed" (always write with left, but do one or more other things with the right hand).
+
+Here, two handedness comparisons are found: R/L (writing hand = left + left mixed vs. right + right mixed), and S/M (right + left / mixed right + mixed left).
+
+```{r, include = F}
+# ## Handedness frequencies: calculate and enter in input spreadsheet
+#
+# #### Architecture (n = 60)
+# n <- 60
+# right_perc <- 20
+# right_mixed_perc <- 68
+# left_perc <- 5
+# left_mixed_perc <- 7
+# (right_n <- (right_perc*n)/100) #12
+# (right_mixed_n <- (right_mixed_perc*n)/100) #40.8 (41)
+# (left_n <- (left_perc*n)/100) #3
+# (left_mixed_n <- (left_mixed_perc*n)/100) #4.2 (4)
+# (12 + 41 + 3 + 4)
+# ## R/L
+# (right_n + right_mixed_n) #52.8 (53)
+# (left_n + left_mixed_n) #7.2 (7)
+# ## S/M
+# (strong <- right_n + left_n) #15
+# (mixed <- right_mixed_n + left_mixed_n) #45
+#
+# #### Music (n = 88)
+# n <- 88
+# right_perc <- 21.7
+# right_mixed_perc <- 63.6
+# left_perc <- 4.8
+# left_mixed_perc <- 9.9
+# (right_n <- (right_perc*n)/100) #19
+# (right_mixed_n <- (right_mixed_perc*n)/100) #56
+# (left_n <- (left_perc*n)/100) #4.2 (4)
+# (left_mixed_n <- (left_mixed_perc*n)/100) #8.7 (9)
+# (19 + 56 + 4 + 9)
+# ## R/L
+# (right_n + right_mixed_n) #75
+# (left_n + left_mixed_n) #13
+# ## S/M
+# (strong <- right_n + left_n) #23
+# (mixed <- right_mixed_n + left_mixed_n) #65
+#
+# #### Control (n = 87)
+# n <- 87
+# right_perc <- 19.5
+# right_mixed_perc <- 64.7
+# left_perc <- 1.1
+# left_mixed_perc <- 14.7
+# (right_n <- (right_perc*n)/100) #17
+# (right_mixed_n <- (right_mixed_perc*n)/100) #56
+# (left_n <- (left_perc*n)/100) #1
+# (left_mixed_n <- (left_mixed_perc*n)/100) #13
+# (17 + 56 + 1 + 13)
+# ## R/L
+# (right_n + right_mixed_n) #73
+# (left_n + left_mixed_n) #14
+# ## S/M
+# (strong <- right_n + left_n) #18
+# (mixed <- right_mixed_n + left_mixed_n) #69
+```
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "gotestam_1990"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

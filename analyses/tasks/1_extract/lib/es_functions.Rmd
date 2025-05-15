@@ -1,0 +1,70 @@
+<!-- Functions to find effect sizes -->
+
+Many of these functions were drawn from Jason Hamm's notes. Original sources are noted here.
+
+To convert means, SDs to Cohen's $d$: $d = (M1 - M2) / (\sqrt(SD1^2 + SD2^2) / 2)$
+
+*Source: https://en.wikipedia.org/wiki/Effect_size#Cohen's_d*
+
+```{r}
+msd_to_d <- function(m1, sd1, m2, sd2) {
+  d <- (m1 - m2) / (sqrt((sd1^2 + sd2^2) / 2))
+  return(d)
+}
+```
+
+To convert f-value to t-value, when the f-value is for a univariate comparison between groups and you can assume equal variance: $t = \sqrt{F}$
+
+*Source: Unattributed, unpublished explanation at https://research.gold.ac.uk/id/eprint/7544/1/t-testsAsVarianceRatioTests.doc*
+
+```{r}
+## Function to convert F-value to t-value
+f_to_t <- function(f) {
+  t <- sqrt(f)
+  return(t)
+}
+
+```
+
+Convert f to d given f and n, following Thalheimer, Cook (2002)
+
+*Source: Thalheimer, W., & Cook, S. (2002). How to calculate effect sizes. Work-Learning Research.*
+
+```{r}
+## "When an experiment that uses an F-test does not list the MSE, you can calculate
+## Cohen’s d as follows using the F statistic. This calculation should only be used
+## when the F-test compares one condition to one other condition."
+f_to_d <- function(f, n1, n2, sign = "pos") {
+  d <- sqrt(f * ((n1+n2)/(n1*n2)) * ((n1+n2)/(n1+n2-2)) )
+  if (sign == "pos") {
+    return(d)
+  } else if (sign == "neg") {return(d*(-1))
+  }
+}
+```
+
+To convert $t$-value to Cohen's $d$: $d = t(\sqrt{1/n1 + 1/n2})$
+
+*Source: Pustejovsky, J. E. (2014). Converting from d to r to z when the design uses extreme groups, dichotomization, or experimental control. Psychological Methods, 19(1), 92–112. https://doi.org/10.1037/a0033788*
+
+```{r}
+## Function to convert t value to Cohen's d, when group n's are available
+t_to_d <- function(t, n1, n2) {
+  d <- t*(sqrt(1/n1 + 1/n2))
+  return(d)
+}
+```
+
+If the article does not list the number of subjects in each condition but does list the total number of subjects — and if you can assume that both conditions have roughly equal numbers of subjects you can estimate Cohen's d by using the following formula:
+$d = 2t/\sqrt{n-2}$
+
+*Source: Thalheimer, W., & Cook, S. (2002). How to calculate effect sizes. Work-Learning Research.*
+
+```{r}
+## Function to convert t value to Cohen's d, when only total n is available
+t_to_d_totaln <- function(t, n){
+  d = (2*t)/(sqrt(n-2))
+  return(d)
+}
+```
+

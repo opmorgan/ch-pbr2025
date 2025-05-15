@@ -1,0 +1,91 @@
+study,task,measure,h,rl_sm,n,n1,n2,es_type,lower,effect,upper,notes
+Bosch (2013),TTCT(F),Originality,EHI,R/L,51,NA,NA,rho,-0.2382095374393444,0.04000000000000007,0.3121428125987562,"From rho, n"
+Burke et al. (1989),TTCT(F),Fluency,Self-ID,R/L,24,12,12,d,-1.1385781423292163,-0.33608699057119673,0.4738680307744014,"From Ms, SDs, Ns"
+Burke et al. (1989),TTCT(F),Flexibility,Self-ID,R/L,24,12,12,d,-1.1728973282565822,-0.3695166527016913,0.4420646627970482,"From Ms, SDs, Ns"
+Burke et al. (1989),TTCT(F),Originality,Self-ID,R/L,24,12,12,d,-1.3593545810861263,-0.5490730371743979,0.27313446792372864,"From Ms, SDs, Ns"
+Burke et al. (1989),TTCT(F),Elaboration,Self-ID,R/L,24,12,12,d,-1.5221720424565686,-0.7032461068674972,0.13060271106718885,"From Ms, SDs, Ns"
+Burke et al. (1989),TTCT(V),Fluency,Self-ID,R/L,24,12,12,d,-0.6280743036394458,0.17570837962262054,0.9755490875523961,"From Ms, SDs, Ns"
+Burke et al. (1989),TTCT(V),Flexibility,Self-ID,R/L,24,12,12,d,-0.94055889589362,-0.1409272301646762,0.6618828016209873,"From Ms, SDs, Ns"
+Burke et al. (1989),TTCT(V),Originality,Self-ID,R/L,24,12,12,d,-0.9417272743254678,-0.14209150772064907,0.6607493075285816,"From Ms, SDs, Ns"
+Coren (1995),AUT,Fluency,LPI,R/L,556,279,277,d,-0.10164117660482273,0.06467680882462726,0.23093419573400617,"From Ms, SDs, approx Ns (Agg.)"
+Coren (1995),AUT,Fluency,LPI,S/M,556,278,278,d,-0.020603230448239418,0.14592640381677904,0.31232450988080074,"From Ms, SDs, approx Ns (Agg.)"
+Falleta (1986),TTCT(F),Originality,Self-ID,R/L,56,28,28,d,-0.4407774816900065,0.08366770498462095,0.607340399842665,"From Ms, SDs, Ns"
+Falleta (1986),TTCT(F),Elaboration,Self-ID,R/L,56,28,28,d,-0.8102975202307869,-0.28503974438291796,0.24281643938685707,"From Ms, SDs, Ns"
+Bosch (2013),TTCT(V),Fluency,EHI,R/L,51,NA,NA,rho,-0.2755836710867282,0,0.2755836710867282,"From rho ('.00'), n"
+Bosch (2013),TTCT(V),Originality,EHI,R/L,51,NA,NA,rho,-0.09031251545185508,0.18999999999999997,0.4424182542223943,"From rho, n"
+Everatt et al. (1999),AUT,Fluency,EHI,R/L,36,NA,NA,rho,-0.3550364728751479,-0.030000000000000044,0.3015074168142891,"From rho, n"
+Everatt et al. (1999),TTCT(F),Fluency,EHI,R/L,36,NA,NA,rho,-0.4880695621460631,-0.18999999999999997,0.14775912720416112,"From rho, n"
+Feen et al. (2020),AUT,Fluency,Tap asym.,R/L,8353,NA,NA,beta,0.1525696513735658,0.305,0.45743034862643417,"From β, n (zAi, zAi^2, sex, age, age^2)"
+Feen et al. (2020),AUT,Originality,Tap asym.,R/L,8353,NA,NA,beta,0.7123251919867465,1.424,2.1356748080132535,"From β, n (zAi, zAi^2, sex, age, age^2)"
+Feen et al. (2020),AUT,Originality/Fluency,Tap asym.,R/L,8353,NA,NA,beta,0.026011874988280066,0.052,0.07798812501171992,"From β, n (zAi, zAi^2, sex, age, age^2)"
+Felton (2017),RAT,Problems solved out of 21,EHI,S/M,142,71,71,d,-0.40479153613094754,-0.07585116934575273,0.2533545881895848,"From Ms, inferred SDs, Ns"
+Felton (2017),RAT,Reaction time,EHI,S/M,142,71,71,d,-0.32736908759290834,0.0015869452743231057,0.3305373155029126,"From Ms, SDs, Ns"
+Felton (2017),AUT,Fluency,EHI,S/M,142,71,71,d,-0.19911900591303516,0.130424719749353,0.4594993668739276,"From Ms, SDs, Ns"
+Felton (2017),AUT,Originality,EHI,S/M,142,71,71,d,-0.30227494525654247,0.026740909727884923,0.35566121095239767,"From Ms, SDs, Ns"
+Folley (2006),AUT,Fluency,EHI,R/L,51,NA,NA,rho,-0.4086894502323125,-0.14999999999999994,0.13099884236999343,"From rho, n"
+Hattie & Fitzgerald (1983),RAT,Problems solved out of 30 in 40 minutes,EHI,R/L,103,NA,NA,rho,-0.10535973851882548,0.08999999999999997,0.27867099088288017,"From rho, n"
+Hattie & Fitzgerald (1983),RAT,Problems solved out of 30 in 40 minutes,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Hattie & Fitzgerald (1983),TTCT(F),Fluency,EHI,R/L,103,NA,NA,rho,-0.16447959052029534,0.03,0.22223442948752758,"From rho, n"
+Hattie & Fitzgerald (1983),TTCT(F),Flexibility,EHI,R/L,103,NA,NA,rho,-0.15472236857222849,0.04000000000000007,0.23173083947046333,"From rho, n"
+Hattie & Fitzgerald (1983),TTCT(F),Originality,EHI,R/L,103,NA,NA,rho,-0.16447959052029534,0.03,0.22223442948752758,"From rho, n"
+Hattie & Fitzgerald (1983),TTCT(F),Elaboration,EHI,R/L,103,NA,NA,rho,-0.14492701236604985,0.050000000000000044,0.2411908459113888,"From rho, n"
+Hattie & Fitzgerald (1983),TTCT(F),Elaboration,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Hattie & Fitzgerald (1983),TTCT(F),Flexibility,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Hattie & Fitzgerald (1983),TTCT(F),Fluency,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Hattie & Fitzgerald (1983),TTCT(F),Originality,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Hattie & Fitzgerald (1983),TTCT(V),Fluency,EHI,R/L,103,NA,NA,rho,-0.19352466479167996,0,0.19352466479167996,"From rho ('.00'), n"
+Hattie & Fitzgerald (1983),TTCT(V),Flexibility,EHI,R/L,103,NA,NA,rho,-0.15472236857222849,0.04000000000000007,0.23173083947046333,"From rho, n"
+Hattie & Fitzgerald (1983),TTCT(V),Originality,EHI,R/L,103,NA,NA,rho,-0.21270140542795665,-0.020000000000000042,0.1741989004680832,"From rho, n"
+Hattie & Fitzgerald (1983),TTCT(V),Flexibility,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Hattie & Fitzgerald (1983),TTCT(V),Fluency,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Hattie & Fitzgerald (1983),TTCT(V),Originality,EHI,R/L,81,52,29,d,NA,NA,NA,Only 'no significant effect'
+Jones et al. (2011),AUT,Fluency,EHI,R/L,64,43,21,d,-1.1240787024314494,-0.5942545938120911,-0.05983155692613592,"From Ms, SDs, Ns (Aggregated)"
+Jones et al. (2011),RAT,"Problems solved out of 20, untimed",EHI,R/L,64,43,21,d,-0.40206434442534766,0.12063490110499632,0.6423731092080064,"From Ms, SDs, Ns (Aggregated)"
+Katz (1980),RAT,Problems solved out of 30 in 40 minutes,EHI,R/L,100,NA,NA,rho,-0.18678499725778563,0.009999999999999957,0.20601346990230576,"From rho, n"
+Katz (1980),RAT,Problems solved out of 30 in 40 minutes,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Katz (1980),TTCT(V),Fluency,EHI,R/L,100,NA,NA,rho,-0.21461717834041405,-0.018999999999999982,0.17808271243425236,"From rho, n"
+Katz (1980),TTCT(V),Flexibility,EHI,R/L,100,NA,NA,rho,-0.21461717834041405,-0.018999999999999982,0.17808271243425236,"From rho, n"
+Katz (1980),TTCT(V),Originality,EHI,R/L,100,NA,NA,rho,-0.16545808457896433,0.032,0.22699139058863685,"From rho, n"
+Katz (1980),TTCT(V),Flexibility,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Katz (1980),TTCT(V),Fluency,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Katz (1980),TTCT(V),Originality,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Katz (1980),TTCT(F),Fluency,EHI,R/L,100,NA,NA,rho,-0.17517508400790321,0.022000000000000023,0.21747835054056433,"From rho, n"
+Katz (1980),TTCT(F),Flexibility,EHI,R/L,100,NA,NA,rho,-0.13902928200462764,0.058999999999999914,0.25249207066433677,"From rho, n"
+Katz (1980),TTCT(F),Originality,EHI,R/L,100,NA,NA,rho,-0.13902928200462764,0.058999999999999914,0.25249207066433677,"From rho, n"
+Katz (1980),TTCT(F),Elaboration,EHI,R/L,100,NA,NA,rho,-0.14099669307003543,0.05700000000000002,0.25061230424915026,"From rho, n"
+Katz (1980),TTCT(F),Elaboration,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Katz (1980),TTCT(F),Flexibility,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Katz (1980),TTCT(F),Fluency,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Katz (1980),TTCT(F),Originality,EHI,R/L,100,70,30,d,NA,NA,NA,Only 'no significant effect'
+Newland (1981),TTCT(F),Fluency,BNHI,R/L,192,96,96,d,-0.6066318848468136,-0.32230585159934355,-0.03714323296958795,"From Ms, SDs, Ns"
+Newland (1981),TTCT(F),Flexibility,BNHI,R/L,192,96,96,d,-0.6907957145740807,-0.4055026910298282,-0.11916519174152398,"From Ms, SDs, Ns"
+Newland (1981),TTCT(F),Originality,BNHI,R/L,192,96,96,d,-1.013113331233113,-0.7219564856656192,-0.4290133674197038,"From Ms, SDs, Ns"
+Newland (1981),TTCT(F),Elaboration,BNHI,R/L,192,96,96,d,-0.9864213054548687,-0.6958761875030266,-0.40360163914058533,"From Ms, SDs, Ns"
+Turner (2016),RAT,Total problems solved in 5 minutes,EHI,S/M,96,48,48,d,-0.318679711182336,0.08178976461016942,0.48181926629550414,"From Ms, SDs, approx Ns (Agg.)"
+Turner (2016),RAT,Problems solved with insight,EHI,S/M,96,48,48,d,-0.09928822167751283,0.3039321170162808,0.7055554099088651,"From Ms, SDs, approx Ns (Agg.)"
+Turner (2016),AUT,Fluency,EHI,S/M,96,48,48,d,-0.0183316184375808,0.5618673158099982,1.1362015853453564,"From Ms, SDs, Ns (Aggregated)"
+Turner (2016),AUT,Appropriateness,EHI,S/M,96,48,48,d,-0.15813285122478773,0.4161917488327056,0.9860977546299967,"From Ms, SDs, Ns (Aggregated)"
+Turner (2016),AUT,Flexibility,EHI,S/M,96,48,48,d,-0.29844597985838667,0.2715037957296191,0.8385372247693069,"From Ms, SDs, Ns (Aggregated)"
+Turner (2016),AUT,Elaboration,EHI,S/M,96,48,48,d,-0.30454668848637184,0.26524763714211264,0.8321959819234256,"From Ms, SDs, Ns (Aggregated)"
+Turner (2016),AUT,Originality,EHI,S/M,96,48,48,d,-0.28041117059646703,0.2900197406083158,0.857338762179117,"From Ms, SDs, Ns (Aggregated)"
+Turner et al. (2017),RAT,Total problems solved in 15 minutes,EHI,R/L,60,NA,NA,rho,-0.1872530751028716,0.07000000000000003,0.31826758232796326,"From rho, n"
+Shobe et al. (2009),AUT,Fluency,EHI,S/M,30,15,15,d,-1.5328046573755196,-0.7745966692414834,0.007299881561075517,"From Ms, SDs, approx Ns"
+Shobe et al. (2009),AUT,Elaboration,EHI,S/M,30,15,15,d,-1.650273663028192,-0.8783100656536799,-0.08046941483545261,"From Ms, SDs, approx Ns"
+Shobe et al. (2009),AUT,Originality,EHI,S/M,30,15,15,d,-1.9570352041721302,-1.1426785574754983,-0.29815649189828314,"From Ms, SDs, approx Ns"
+Shobe et al. (2009),AUT,Flexibility,EHI,S/M,30,15,15,d,-1.9804469732229983,-1.162509600574796,-0.31416170845993163,"From Ms, SDs, approx Ns"
+Shobe et al. (2009),AUT,Appropriateness,EHI,S/M,30,15,15,d,-1.9833436611605386,-1.1649647450214349,-0.3161406230111009,"From Ms, SDs, approx Ns"
+Stewart & Clayson (1980),TTCT(F),Flexibility,Harris,R/L,30,15,15,d_p,NA,NA,NA,Only 'no significant effect'
+Stewart & Clayson (1980),TTCT(F),Fluency,Harris,R/L,30,15,15,d_p,NA,NA,NA,Only 'no significant effect'
+Stewart & Clayson (1980),TTCT(F),Originality,Harris,R/L,30,15,15,d_p,-1.2852287305102517,-0.8684962373468951,-0.4475360568326349,"From F, n1, n2 (ANOVA with 3 age groups, handedness)"
+Stewart & Clayson (1980),TTCT(F),Elaboration,Harris,R/L,30,15,15,d_p,-1.9981958786998786,-1.544575762374344,-1.084573922005898,"From F, n1, n2 (ANOVA with 3 age groups, handedness)"
+Zickert et al. (2018),AUT,Fluency,EHI,R/L,9089,NA,NA,rho_p,0.0544563190415548,0.07745966692414834,0.09596200867766001,"From partial eta^2 (sex [fixed], age [random], age^2 [random])"
+Zickert et al. (2018),AUT,Originality,EHI,R/L,9089,NA,NA,rho_p,0.06090839021698959,0.08366600265340755,0.10227377625831016,"From partial eta^2 (sex [fixed], age [random], age^2 [random])"
+Zickert et al. (2018),AUT,Originality/Fluency,EHI,R/L,9089,NA,NA,rho_p,0.03021899500750498,0.05477225575051661,0.07263772388161821,"From partial eta^2 (sex [fixed], age [random], age^2 [random])"
+Zickert et al. (2018),AUT,Fluency,EHI,R/L,9054,3205,5849,rho,0.06594716803065091,0.0864283935714127,0.10683682298755702,From raw data
+Zickert et al. (2018),AUT,Fluency,EHI,R/L,9054,3205,5849,d,0.13164575305808812,0.1747998021440239,0.21794423607872582,From raw data
+Zickert et al. (2018),AUT,Originality,EHI,R/L,9054,3205,5849,rho,0.0719481829961925,0.0924098601525185,0.11279378702040993,From raw data
+Zickert et al. (2018),AUT,Originality,EHI,R/L,9054,3205,5849,d,0.1500811104735578,0.1932521584279106,0.23641254134060272,From raw data
+Zickert et al. (2018),AUT,Fluency,EHI,S/M,9054,4468,4586,rho,-0.06709411862723515,-0.04655983478657557,-0.02598612554863094,From raw data (unbalanced groups)
+Zickert et al. (2018),AUT,Fluency,EHI,S/M,9054,4468,4586,d,-0.14843410109934188,-0.10720756008946032,-0.06597523387313346,From raw data (unbalanced groups)
+Zickert et al. (2018),AUT,Originality,EHI,S/M,9054,4468,4586,rho,-0.06717068206256727,-0.04663657783505124,-0.026062983509596977,From raw data (unbalanced groups)
+Zickert et al. (2018),AUT,Originality,EHI,S/M,9054,4468,4586,d,-0.15687036490044728,-0.11563935921030503,-0.07440210184385353,From raw data (unbalanced groups)

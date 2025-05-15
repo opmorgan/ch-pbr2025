@@ -1,0 +1,118 @@
+Here, I calculate fixed effects models "by hand" for task, measure, and effect size type, and display pooled estimates along with individual study estimates.
+
+How to calculate summaries using fixed effects model
+(Following https://perma.cc/96PS-FN7Z)
+
+1. Find weights: inverse variance
+    i) Find standard error of ES estimate (use 95% CI)
+    i) Find variance (standard error squared)
+    i) Find inverse variance (1/variance)
+1. Estimate pooled effect size as the weighted average of each study's effect size
+    i) Multiple each study's effect size with its weight.
+    i) Sum these products across each effect
+    i) Divide by the sum of all individual weights
+
+The columns “lower” and “upper” are 95% CI bounds on the reported effect size (d or Pearson’s rho). “h” is handedness measure, and “rl_sm” shows whether the effect reflects handedness direction (“R/L”: right/left) or strength (“S/M”: strong/mixed). Positive effect sizes indicate a right- or strong-hander advantage. The table section headers show "measure - effect size type."
+
+Confidence intervals are likely **overly wide**: they are calculated as the weighted average of individual confidence bound.
+```{r, include = F, cache = T}
+#### Calculate pooled ES for specified subgroups
+
+## Define groups to calculate ES over
+groups <- c("task", "measure", "es_type")
+
+## Specify color palette for tables
+pal <- brewer.pal(9, "Pastel1")
+
+## TODO: Consider using Knapp-Hartung adjustments (Knapp & Hartung, 2003)
+## to calculate the confidence interval around the pooled effect.
+## https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/pooling-es.html
+
+##TODO: Check results against metagen
+## https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/pooling-es.html#pre-calculated-es
+
+## Define function to make table showing pooled ES for each measure, ES type
+make_measure_es_table <- function(es_combo, grouping_vars = c("measure", "es_type")) {
+  es_combo %>%
+    select(study, measure, h, rl_sm, es_type, N, n, n1, n2, inv_var,
+           lower, effect, upper) %>%
+    pretty_table(title = "RAT", groupname_col = grouping_vars) %>%
+    # tbl_summary(by = es_type) %>%
+    data_color(columns = study,
+               colors = scales::col_factor(palette = pal,
+                  domain = NULL)
+              )
+}
+```
+
+#### RAT
+```{r, echo = F, cache = T}
+es_task <- es_individual %>% filter(task == "RAT")
+es_pooled <- pool_es_fixed(es_task, groups, "fixed")
+es_combo <- combined_es(es_pooled, es_task, groups)
+make_measure_es_table(es_combo)
+```
+
+##### Combine measures of total score
+```{r, echo = F, cache = T}
+groups <- c("task", "measure", "es_type")
+measure_var <- "Problems solved"
+es_task <- es_individual %>%
+  filter(task == "RAT") %>%
+  mutate(measure_orig = measure,
+         measure_temp = case_when(
+           measure == "Total problems solved in 5 minutes" ~ "Problems solved",
+           measure == "Total problems solved in 15 minutes" ~ "Problems solved",
+           measure == "Problems solved out of 20, untimed" ~ "Problems solved",
+           measure == "Problems solved out of 30 in 40 minutes" ~ "Problems solved",
+           measure == "Problems solved out of 21" ~ "Problems solved",
+           TRUE ~ measure
+           )
+  )  %>%
+  filter(measure_temp == "Problems solved") %>%
+  mutate(measure = measure_temp)
+
+## "Unreported" is included here because my best guess is that this study
+## used some kind of total problems measure:
+## " The creativity tests were administered and scored in
+##   standard fashion."
+
+## and combine with individual effect estimates (combined_es())
+es_pooled <- pool_es_fixed(es_task, groups, "fixed")
+es_combo <- combined_es(es_pooled, es_task, groups)
+es_combo %>%
+  select(study, measure, measure_orig, h, rl_sm, es_type, N, n, n1, n2, inv_var,
+         lower, effect, upper) %>%
+  pretty_table(title = "RAT", groupname_col = c("measure", "es_type")) %>%
+  # tbl_summary(by = es_type) %>%
+  data_color(columns = study,
+             colors = scales::col_factor(palette = pal,
+                domain = NULL)
+            )
+```
+
+#### AUT
+```{r, echo = F, cache = T}
+es_task <- es_individual %>% filter(task == "AUT")
+es_pooled <- pool_es_fixed(es_task, groups, "fixed")
+es_combo <- combined_es(es_pooled, es_task, groups)
+make_measure_es_table(es_combo)
+```
+
+#### TTCT-F
+```{r, echo = F, cache = T}
+es_task <- es_individual %>% filter(task == "TTCT(F)")
+es_pooled <- pool_es_fixed(es_task, groups, "fixed")
+es_combo <- combined_es(es_pooled, es_task, groups)
+make_measure_es_table(es_combo)
+```
+
+#### TTCT-V
+```{r, echo = F, cache = T}
+es_task <- es_individual %>% filter(task == "TTCT(V)")
+es_pooled <- pool_es_fixed(es_task, groups, "fixed")
+es_combo <- combined_es(es_pooled, es_task, groups)
+make_measure_es_table(es_combo)
+```
+#### Blank (collapse)
+

@@ -1,0 +1,95 @@
+Cosenza, R. M., & Mingoti, S. A. (1993). Career choice and handedness: A survey among university applicants. Neuropsychologia, 31(5), 487–497. https://doi.org/10.1016/0028-3932(93)90062-5
+[[PDF](https://drive.google.com/file/d/1zh2In01lHuCQP81uOpLj4lzcfsh1fyPH/view?usp=sharing)]
+
+The authors report the handedness of 16,590 applicants to a university in Brazil. All applicants completed the EHI (!). The authors report the frequency of left, mixed and right handers (binned by laterality quotients below -10; between -9 and 70; and between 71 and 100) among applicants to each of 37 degree progam, including Architecture, Music, and Fine Arts.
+
+They also binned applicants into 5 categories:
+"The courses were also divided into five different blocks of occupations, as follows: (1) Arts: Architecture, Fine Arts, Music (N=587: 422 female, 165 male); (2) Biological: Biology, Dentistry, Medicine, Nursing, Occupational Therapy, Pharmacy, Physical Education, Physical Therapy, Psychology and Veterinary (N=7626: 5002 female, 2624 male); (3) Economical: Accountancy, Business Administration, Economics (N= 1845: 908 female, 937 male); (4) Mathematical: Chemistry, Computer Science, Engineerings, Geology, Mathematics, Physics, Statistics (N= 3030: 835 female, 2195 male); and (5) Verbal: Communication, Education, Geography, History, Languages, Law, Library Science, Philosophy and Sociology (N = 3502: 2157 female, 1345 male)."
+
+The present analysis extracts frequencies for Architecture, Music, and Fine Arts, each compared against the frequencies in the rest of the sample, excluding Fine Arts, Music, and Architecture. Comparisons are estimated for for R/L as SR/SL, and S/M as (SR+SL)/M (using the three bins from table 1).
+
+### Calculate frequencies based on Table 1
+```{r}
+#### Total sample (including Fine Arts, Architecture, and Music)
+n_left <- 1238
+n_mixed <- 5788
+n_right <- 9564
+(n_total <- n_left + n_mixed + n_right) # 16590
+
+#### Fine Arts
+n_left <- 4
+n_mixed <- 20
+n_right <- 27
+(n_total <- n_left + n_mixed + n_right) # 51
+## R/L
+(n_R <- n_right) # 27
+(n_L <- n_left) # 4
+(n_total <- n_R + n_L) # 31
+## S/M
+(n_S <- n_right + n_left) # 31
+(n_M <- n_mixed) # 20
+(n_total <- n_S + n_M) # 51
+
+#### Architecture
+n_left <- 42
+n_mixed <- 179
+n_right <- 305
+(n_total <- n_left + n_mixed + n_right) # 526
+## R/L
+(n_R <- n_right) # 305
+(n_L <- n_left) # 42
+(n_total <- n_R + n_L) # 347
+## S/M
+(n_S <- n_right + n_left) # 347
+(n_M <- n_mixed) # 179
+(n_total <- n_S + n_M) # 526
+
+#### Music
+n_left <- 2
+n_mixed <- 6
+n_right <- 2
+(n_total <- n_left + n_mixed + n_right) # 10
+## R/L
+(n_R <- n_right) # 2
+(n_L <- n_left) # 2
+(n_total <- n_R + n_L) # 4
+## S/M
+(n_S <- n_right + n_left) # 4
+(n_M <- n_mixed) # 6
+(n_total <- n_S + n_M) # 10
+
+
+#### Total sample, minus Fine Arts, Architecture, and Music
+(n_left <- 1238 - 4 - 42 - 2) # 1190
+(n_mixed <- 5788 - 20 - 179 - 6) # 5583
+(n_right <- 9564 - 27 - 305) # 9232
+## R/L
+(n_R <- n_right) # 9232
+(n_L <- n_left) # 1190
+(n_total <- n_R + n_L) # 10422
+## S/M
+(n_S <- n_right + n_left) # 10422
+(n_M <- n_mixed) # 5583
+(n_total <- n_S + n_M) # 16005
+
+```
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "cosenza_1993"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

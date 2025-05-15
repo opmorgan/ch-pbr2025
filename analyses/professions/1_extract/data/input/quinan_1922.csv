@@ -1,0 +1,7 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Professionals,Music,Violin/violists,Machinists,R/L,40,100,2,4,1i_2pt,success,R/L,0,0
+Professionals,Music,Cello/bassists,Machinists,R/L,24,100,2,4,1i_2pt,success,R/L,0,0
+Professionals,Music,Piano/Organists,Machinists,R/L,18,100,2,4,1i_2pt,success,R/L,0,0
+Professionals,Music,Flute/Oboists,Machinists,R/L,10,100,0,4,1i_2pt,success,R/L,0,0
+Professionals,Music,Trombonists,Machinists,R/L,8,100,2,4,1i_2pt,success,R/L,0,0
+Professionals,Music,Instrumental musicians,Machinists,R/L,100,100,8,4,1i_2pt,success,R/L,1,0

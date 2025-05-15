@@ -1,0 +1,388 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Turner, C. E. (2016). Do saccadic bilateral eye movement enhance performance on creative tasks? [PhD Thesis]
+
+The authors report the result of an F-test for a main effect of handedness on "total problems solved with insight": F(1, 86) = 4.23, p < 0.05. Subjects were instructed to report, after every RAT problem, if they experienced an "aha" feeling. Out of the total number of RAT problems solved in 5 minutes, those with a reported "aha" counted as "problems solved with insight".
+
+The authors report the means and SDs for total problems solved (a more direct, or at least more common measure of divergent thinking), in a table. These group means and SDs are for two experimental groups, in two saccade conditions that are irrelevant for our purposes. For meta-analysis, whole group means are extracted from this table to find an effect size for the effect of handedness on total RAT problems solved in 5 minutes.
+
+
+### {.tabset}
+
+```{r}
+study <- "turner_2016"
+task <- "RAT"
+```
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "d"
+```
+
+#### Calculating d for group difference in "problems solved with insight", based on reported F-test
+```{r}
+measure <- "Problems solved with insight"
+f <- 4.32
+n1 <- 48
+n2 <- 48
+
+t <- f_to_t(f)
+d <- t_to_d(t, n1, n2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From F, n1, n2 (Chain formula from Jason's cheatsheet)",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+## Check F -> d transformation by calculating d following Thalheimer, Cook (2002)
+
+f <- 4.32
+n1 <- 48
+n2 <- 48
+## Note: f-test is reported as F(1, 86) = 4.23, p < 0.05.
+## So, the mean number of subjects in each condition might really be 44...
+
+d <- f_to_d(f, n1, n2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From F, n1, n2 (Formula from Thalheimer, Cook 2002)", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+#### Calculating d for group difference in total RAT problems solved in 5 minutes: by condition, then aggregated (aggregated is the most relevant for this review)
+
+```{r}
+measure <- "Total problems solved in 5 minutes, central condition"
+n1 <- 24
+n2 <- 24
+## stats for "central circles"
+m_mixed_central <- 4.67
+sd_mixed_central <- 2.53
+m_strong_central <- 4.88
+sd_strong_central <- 3.07
+
+d_central <- msd_to_d(m1 = m_strong_central, sd1 = sd_strong_central,
+                      m2 = m_mixed_central, sd2 = sd_mixed_central)
+
+esci <- psych::cohen.d.ci(d = d_central, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Total problems solved in 5 minutes, moving condition"
+n1 <- 24
+n2 <- 24
+## stats for "moving circles"
+m_mixed_moving <- 4.29
+sd_mixed_moving <- 2.31
+m_strong_moving <- 4.63
+sd_strong_moving <- 2.32
+
+d_moving <- msd_to_d(m1 = m_strong_moving, sd1 = sd_strong_moving,
+                     m2 = m_mixed_moving, sd2 = sd_mixed_moving)
+
+esci <- psych::cohen.d.ci(d = d_moving, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+```{r}
+## Is it possible to estimate an effect combining the two conditions?
+## The number of participants in each condition should be equal (24 in each group)
+## Following Claire's suggestion, I will take the mean of means, and pool SD:
+## "i think you could square each SD, multiply by N - 1 for each, sum the resulting values, then divide by the new N-1 and square root? (basically reversing the SD formula.)"
+measure  <- "Total problems solved in 5 minutes"
+n1 <- 24
+n2 <- 24
+
+## pool sd, following Claire's formula
+## Subtract one from the pooled n to calculate aggregated sd --
+## subtracting two creates "pooled sd", which estimates a population sd based on the sample sds (rather than calculating the sample sd, if the two groups were combined)
+pool_sd <- function(sd1, sd2, n1, n2) {
+  sd <- sqrt( ((sd1^2)*(n1-1) + (sd2^2)*(n2-1)) / (n1 + n2 - 1) )
+  return(sd)
+}
+## pool sd, following statology.com
+pool_sd_statology <- function(sd1, sd2, n1, n2) {
+  sd <- sqrt( ((sd1^2)*(n1-1) + (sd2^2)*(n2-1)) / (n1 + n2 - 2) )
+  return(sd)
+}
+
+## Construct aggregate sd, following wikipedia's formula for aggregated sample-based sd
+## https://en.wikipedia.org/wiki/Pooled_variance
+## I used this before finding an equivalent formula int he Cochrane handbook
+agg_sd <- function(sd1, sd2, n1, n2, m1, m2) {
+  m_agg <- (1/(n1+n2)) * (n1*m1 + n2*m2)
+  sd <- sqrt(
+             ( (n1-1)*sd1^2 + n1*m1^2 + (n2-1)*sd2^2 + n2*m2^2 - (n1+n2)*m_agg^2 )
+             / (n1 + n2 - 1)
+  )
+  return(sd)
+}
+
+sd_mixed_overall <- pool_sd(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- pool_sd(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            n1 = n1, n2 = n2)
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, pooled SDs, n1, n2 (Claire's formula)",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c("TEST: ", study, ", ", task, ": ", measure))
+```
+
+```{r}
+## Use wikipedia's sd aggregation formula
+sd_mixed_overall <- agg_sd(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, pooled SDs, approx n1, n2 (Wikipedia's method for aggregated sample-based SD)",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c("TEST: ", study, ", ", task, ": ", measure))
+```
+
+```{r}
+## Use Cochrane handbook formula
+sd_mixed_overall <- agg_sd_cochrane(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd_cochrane(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, approx Ns (Cochrane handbook method for constructing total sample SD)",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+Add this ES to final table with a shortened note.
+```{r}
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, approx Ns (Agg.)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+
+#### Checking work: Aggregating sds across conditions to find overall mean, SD, and effect size; comparing to effect size estimated from reported f test for problems solved with insight
+```{r}
+## Check work: do the numbers add up for problems solved with insight?
+## Based on the F-test, the effect size for this difference should be 0.424.
+measure  <- "Problems solved with insight"
+n1 <- 24
+n2 <- 24
+## These n's might not be correct, even though they are implied in the methods section. But, changing the n in either group by 10 does not change the effect size very much.
+## "problems solved with insight, central condition"
+## stats for "central circles"
+m_mixed_central <- 2.63
+sd_mixed_central <- 1.95
+m_strong_central <- 3.29
+sd_strong_central <- 2.85
+
+## "problems solved with insight, moving condition"
+## stats for "moving circles"
+m_mixed_moving <- 3.00
+sd_mixed_moving <- 1.77
+m_strong_moving <- 3.46
+sd_strong_moving <- 1.98
+
+
+sd_mixed_overall <- pool_sd(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- pool_sd(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            n1 = n1, n2 = n2)
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, pooled SDs, approx n1, n2 (Claire's formula)",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c("TEST: ", study, ", ", task, ": ", measure))
+```
+
+
+
+```{r}
+## Use wikipedia's sd aggregation formula
+sd_mixed_overall <- agg_sd(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, pooled SDs, approx n1, n2 (Wikipedia's method for aggregated sample-based SD)",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c("TEST: ", study, ", ", task, ": ", measure))
+```
+**This effect size is in the same ballpark but not identical to the estimate from the F-test (ES= 0.424, CI = [0.013, 0.831]. This may be because the number of subjects in each condition is not reported clearly, or because a covariate such as condition was included in the reported F-test.**
+
+**To get around this uncertainty, I will reconstruct sample SD using the Cochrane Handbook's formula, and  use that to calculate Cohen's D. This is more likely to reflect the effect size of interest than relying on the authors' F-test result, which might have included covariates or adjustments.**
+
+```{r}
+## Use Cochrance's sd aggregation formula
+sd_mixed_overall <- agg_sd_cochrane(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd_cochrane(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, approx Ns (Cochrane handbook method for constructing total sample SD)",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+Add this ES to final table with a shortened note.
+```{r}
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, approx Ns (Agg.)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

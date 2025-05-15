@@ -1,0 +1,23 @@
+```{r}
+## Testing out different random effects
+## Architecture
+## Add estimate random effect
+glm_sub_prof <- glm_sub %>% filter(profession == "Architecture")
+glm1 <- lme4::glmer(data = glm_sub_prof,
+                    handedness ~ group + (1|study) + (1|est_id), family = "binomial")
+summary(glm1) ## estimate: .20391 (logit), SE = 0.09216
+exp(.20391) # 1.23
+
+## Add handedness comparison random effect
+glm1 <- lme4::glmer(data = glm_sub_prof,
+                    handedness ~ group + (1|study) + (1|est_id) + (1|comparison), family = "binomial")
+summary(glm1) ## estimate: .20391 (logit), SE = 0.09249
+exp(.20391) # 1.23
+
+## Add population as a random effect
+glm1 <- lme4::glmer(data = glm_sub_prof,
+                    handedness ~ group + (1|study) + (1|est_id) + (1|comparison) + (1|pop), family = "binomial")
+summary(glm1) ## estimate: .20391 (logit), SE = .09223
+exp(.20391) # 1.23
+str(glm1)
+```

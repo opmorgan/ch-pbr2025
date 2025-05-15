@@ -1,0 +1,15 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_left_creative,n_control,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Professionals,Architecture,"Architects, except naval","Non-art, architecture, music",R/L,4,0,6090,1183,3i_3pt,mix,SR/SL,1,0
+Professionals,Art,Artists and related workers,"Non-art, architecture, music",R/L,13,3,6090,1183,3i_3pt,mix,SR/SL,0,0
+Professionals,Art,Designers,"Non-art, architecture, music",R/L,38,9,6090,1183,3i_3pt,mix,SR/SL,0,0
+Professionals,Art,Photographers,"Non-art, architecture, music",R/L,14,2,6090,1183,3i_3pt,mix,SR/SL,0,0
+Professionals,Art,Writers and authors,"Non-art, architecture, music",R/L,13,5,6090,1183,3i_3pt,mix,SR/SL,0,0
+Professionals,Art,Artistic occupations,"Non-art, architecture, music",R/L,78,19,6091,1184,4i_3pt,mix,SR/SL,1,0
+Professionals,Music,"Musicians, singers and related workers","Non-art, architecture, music",R/L,11,1,6090,1183,3i_3pt,mix,SR/SL,1,0
+Professionals,Architecture,"Architects, except naval","Non-art, architecture, music",S/M,4,0,6090,635,3i_3pt,mix,(SR+SL)/M,1,0
+Professionals,Art,Artists and related workers,"Non-art, architecture, music",S/M,13,1,6090,635,3i_3pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Designers,"Non-art, architecture, music",S/M,38,4,6090,635,3i_3pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Photographers,"Non-art, architecture, music",S/M,14,0,6090,635,3i_3pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Writers and authors,"Non-art, architecture, music",S/M,13,4,6090,635,3i_3pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Artistic occupations,"Non-art, architecture, music",S/M,78,9,6091,636,4i_3pt,mix,(SR+SL)/M,1,0
+Professionals,Music,"Musicians, singers and related workers","Non-art, architecture, music",S/M,11,0,6090,635,3i_3pt,mix,(SR+SL)/M,1,0

@@ -1,0 +1,26 @@
+Aggleton, J. P., Kentridge, R. W., & Good, J. M. M. (1994). Handedness and musical ability: A study of professional orchestral players, composers, and choir members. Psychology of Music, 22(2), 148–156. https://doi.org/10.1177/0305735694222004
+[[PDF](https://drive.google.com/file/d/1wxOuw3OMp5IL0kpNHvnjjpNvaQos21-N/view?usp=sharing)]
+
+This study reports handedness of professional musicians (choir members, orchestra members, and composers). It uses a subset of another sample, matched 1-1 age and gender, as a control group. The controls were adults recruited from a medical practrice in a British tow.
+
+Handedness was binned using a 0-split on Oldfield's laterality index, on the 10-item EHI scale. Right and left handers were then further divided, yielding four bins, strong/mixed by right/left, with this data reported for each group of musicians, and for the full control group (Table 1). From these numbers, the proportion of strong/mixed right/left handers across all musicians was calculated, and compared to the control group's. For the R/L comparison, groups were binned as (SR+MR)/(ML+SL); for the S/M comparison, as (SR+SL)/(ML+MR).
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "aggleton_1994"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup", cache = T}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

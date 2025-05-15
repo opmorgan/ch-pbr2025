@@ -1,0 +1,86 @@
+Coren, S., & Porac, C. (1982). Lateral Preference and Cognitive Skills: An Indirect Test. Perceptual and Motor Skills, 6. [[PDF](https://drive.google.com/file/d/1T8n0Ule39qGfSMggTaORoAV9fVkn8kax/view?usp=sharing)]
+
+Handedness was assessed with a 13-item, 3 point scale, with "both" coded as zero, and participants were binned as (1) "right" or "left" handed depending on whether their total score was positive or negative, and (2) "consistent right" or "non-right" depending on whether they had the max right-handedness score. Total ns and frequencies of right-handedness/consistent right handedness are reported in Table 1. Here, (1) is used for for "R/L", and (2) for "S/M".
+
+The number of science/graphic arts students (the creative group) is reported once as 225, and the second time as 235. I will infer the real number based on which ratio is closest to the reported percentage. This works cleanly for every condition except for the consistent right-sided language condition. Here, the closet percentage I can get it 78.63, when it should be 78.8. I think this is close enough.
+
+
+### Find frequencies of lefties from data in paper
+```{r}
+# ## Calculte the number of lefties in each condition
+# ## (Enter results in input spreadsheet)
+#
+# #### Creative condition: Science/Graphic arts.
+# n_creative <- 225
+# ## Right-sided comparison (R/L)
+# (pr_creative <- 87.6)
+# (pl_creative  <- 100-pr_creative) # 12.4
+# (n_right_creative <- (pr_creative * n_creative) / 100) # 205.86 (235); 197.1 (225)
+# (n_left_creative <- n_creative - n_right_creative) # 29.14 (235); 27.9 (225)
+# ## Assuming n = 235
+# 29/235 # PL = 12.34%
+# 206/235 # PR = 87.66%
+# ## Assuming n = 225
+# 28/225 # PL = 12.44
+# 197/225 # PR = 87.56
+# ## The numbers for n = 225 are closer to the reported percentages,
+# ## So I will take this as the real n.
+# ## So, for the right vs. left-sided comparison:
+# ##
+# ## n_creative = 225
+# ## n_left_creative = 28
+#
+# ## Consistent right-sided comparison (S/M)
+# n_creative <- 225
+# (pr_creative <- 69.2)
+# (pl_creative  <- 100-pr_creative)
+# (n_right_creative <- (pr_creative * n_creative) / 100)
+# (n_left_creative <- n_creative - n_right_creative)
+# ## n_creative = 225
+# ## n_left_creative = 69
+#
+# #### Control condition: Language
+# n_control <- 262
+# ## Right-sided comparison (R/L)
+# (pr_control <- 89.7)
+# (pl_control <- 100 - pr_control) # 10.3
+# (n_right_control <- (pr_control * n_control) / 100) # 235.014
+# (n_left_control <- (pl_control * n_control) / 100) # 26.986
+# 27/262 # PL = 10.3
+# 235/262 #PR = 89.70
+# ## n_control = 262
+# ## n_left_control = 27
+#
+# ## Consistent right-sided comparison (S/M)
+# n_control <- 262
+# ## Right-sided comparison (R/L)
+# (pr_control <- 78.8)
+# (pl_control <- 100 - pr_control) # 21.2
+# (n_right_control <- (pr_control * n_control) / 100) # 206.45
+# (n_left_control <- (pl_control * n_control) / 100) # 55.54
+# 56/262 # PL = 21.37
+# 206/262 # PR = 78.63
+# ## These numbers don't round to the reported percentages -- they are off by .012.
+# ## n_control = 262
+# ## n_left_control = 21
+```
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "coren_1982"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

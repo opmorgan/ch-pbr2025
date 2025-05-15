@@ -1,0 +1,3 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Students,Architecture,Architecture students,NA,R/L,484,NA,79,NA,1i_3pt,success,SR/(M+SL),1,0
+Faculty,Architecture,Architecture faculty,NA,R/L,17,NA,5,NA,1i_3pt,success,SR/(M+SL),1,0

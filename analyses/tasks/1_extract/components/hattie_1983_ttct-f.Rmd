@@ -1,0 +1,199 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Hattie, J., & Fitzgerald, D. (1983). Abstract: Do Left-Handers Tend to Be More Creative? The Journal of Creative Behavior, 17(4), 269–269. https://doi.org/10.1002/j.2162-6057.1983.tb00363.x
+
+The authors replicated Katz 1980 with a sample of 103 18-year-olds, with handedness measured by the EHI using Oldfield's formula: R-L/R+L.
+
+They report
+- "The three handedness groups did not differ on any of the
+measures of creativity." (No relevant stats reported)
+- Correlation estimates (Pearson's rho) for TTCT-V (3 measures) and TTCT-F (4 measures)
+- Correlation estimate (Pearson's rho) for the RAT)
+
+
+```{r}
+study <- "hattie_1983"
+task <- "TTCT(F)"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+```
+
+### Pearson's ρ
+```{r}
+es_type <- "rho"
+```
+
+```{r}
+## Load data
+input_filename <- "hattie_1983_ttct-f.csv"
+input_path <- here(extract_dir, "data", "input", input_filename)
+input <- read_csv(input_path)
+## Display data
+pretty_table(input, title = input_filename)
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+unique_n <- input %>% .[["n"]] %>% unique()
+unique_n
+if (length(unique_n == 1)) {
+  n <- unique_n %>% first()
+} else {
+  stop(str_c(study, ", ", task,
+    ": unexpected multiple values for n (total) in input file"))
+}
+
+str_c("n (total): ", n)
+```
+
+```{r}
+measure <- "Fluency"
+rho <- input %>% filter(ttct_measure == measure) %>% .[["rho"]]
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Flexibility"
+rho <- input %>% filter(ttct_measure == measure) %>% .[["rho"]]
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Originality"
+rho <- input %>% filter(ttct_measure == measure) %>% .[["rho"]]
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Elaboration"
+rho <- input %>% filter(ttct_measure == measure) %>% .[["rho"]]
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+### Cohen's D
+The authors reported that "The three handedness groups did not differ on any of the
+measures of creativity." (No relevant stats reported).
+
+```{r}
+es_type <- "d"
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+n_input <- data.frame(n_right = NA, n_left = NA)
+for (h in c("n_right", "n_left")) {
+  unique_n <- input %>% .[[h]] %>% unique()
+  if (length(unique_n == 1)) {
+    n_input[[h]]  <- unique_n %>% first()
+    n_input
+  } else {
+    stop(str_c(study, ", ", task,
+      ": unexpected multiple values for n (right handers) in input file"))
+  }
+}
+
+n_right <- n_input$n_right
+n_left <- n_input$n_left
+str_c(n_right, ", ", n_left)
+```
+
+```{r}
+measure <- "Elaboration"
+esci <- tibble(lower = NA, upper = NA, effect = NA)
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "Only 'no significant effect'",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Flexibility"
+esci <- tibble(lower = NA, upper = NA, effect = NA)
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "Only 'no significant effect'",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Fluency"
+esci <- tibble(lower = NA, upper = NA, effect = NA)
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "Only 'no significant effect'",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Originality"
+esci <- tibble(lower = NA, upper = NA, effect = NA)
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "Only 'no significant effect'",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

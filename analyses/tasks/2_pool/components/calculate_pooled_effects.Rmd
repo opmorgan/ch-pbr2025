@@ -1,0 +1,62 @@
+<!-- ### Fixed effect model by hand {.tabset} -->
+
+
+<!-- ```{r child = here(pool_dir, "analysis", "fixed_effects_manual.Rmd")} -->
+<!-- ``` -->
+
+<!-- ### All studies -->
+<!-- ```{r child = here(pool_dir, "analysis", "metagen_all_studies.Rmd")} -->
+<!-- ``` -->
+
+<!-- ### All studies by task {.tabset} -->
+<!-- ```{r child = here(pool_dir, "analysis", "metagen_by_task.Rmd")} -->
+<!-- ``` -->
+
+<!-- ### All studies by measure {.tabset} -->
+<!-- ```{r child = here(pool_dir, "analysis", "metagen_by_measure.Rmd")} -->
+<!-- ``` -->
+
+<!-- ### All studies by effect size type {.tabset} -->
+<!-- ```{r child = here(pool_dir, "analysis", "metagen_by_estype.Rmd")} -->
+<!-- ``` -->
+
+
+<!-- ### All studies by task, effect size type {.tabset} -->
+<!-- ```{r child = here(pool_dir, "analysis", "metagen_by_task_estype.Rmd")} -->
+<!-- ``` -->
+
+<!-- ### All studies by task, measure -->
+<!-- ```{r child = here(pool_dir, "analysis", "metagen_by_task_measure.Rmd")} -->
+<!-- ``` -->
+
+<!-- ### All studies by measure, ES type {.tabset} -->
+<!-- ```{r child = here(pool_dir, "analysis", "metagen_by_measure_estype.Rmd")} -->
+<!-- ``` -->
+
+### All studies by task, measure, effect size type
+```{r child = here(pool_dir, "analysis", "metagen_by_task_measure_estype.Rmd")}
+```
+
+<!-- ### (TODO) All studies by task, with one summary estimate per each study -->
+
+```{r}
+## Get rid of "collapsed" estimates -- it is statistically unfair to pool
+## partial and simple d, rho
+pool_table <- pool_table %>%
+  filter(partials != "collapsed") %>%
+  # select(-partials) %>% ## COMMENTED OUT TO TROUBLESHOOT -- COMMENT BACK IN LATER
+  ## arrange columns
+  arrange(label, model_type, task, measure, es_type, effect)
+```
+
+### Summary - Fixed
+```{r, echo = F}
+pool_table %>% filter(model_type == "fixed") %>% pool_table_gt("Fixed effect results")
+```
+
+### Summary - Random {.active}
+```{r, echo = F}
+pool_table %>% filter(model_type == "random") %>% pool_table_gt("Random effect results")
+```
+
+### Blank (collapse)

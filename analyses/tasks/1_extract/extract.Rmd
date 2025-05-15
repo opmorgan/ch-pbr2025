@@ -1,0 +1,381 @@
+---
+title: "Tasks: extract effect sizes (Creativity and Handedness)"
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    highlight: zenburn
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F,
+                      fig.align = "center", fig.width = 9,
+                      fig.height = 6, results = "asis")
+options(knitr.kable.NA = "")
+options(knitr.duplicate.label = "allow")
+```
+
+```{r lib, include = F}
+## Test that this file exists in the expected place
+## relative to project root
+here::i_am("analyses/tasks/1_extract/extract.Rmd",
+           uuid = "11fea017-684e-4405-a555-bdc7e38b6e0b")
+
+## Load Packages
+library(here)
+library(tidyverse)
+library(gt) ## To print tables
+library(RColorBrewer) ## For categorical color palette
+requireNamespace("psych") ## To find CI for Cohen's D
+requireNamespace("MBESS") ## To find CI for partial eta^2
+
+## Source common (project-level) functions
+source(here("analyses", "lib", "util.R")) # format_p(), numformat()
+source(here("analyses", "lib", "tables.R")) # pretty_table()
+source(here("analyses", "lib", "conversions.R")) # pretty_table()
+source(here("analyses", "lib", "es_functions.R"))
+source(here("analyses", "lib", "util.R"))
+source(here("analyses", "lib", "agg_functions.R"))
+
+## Declare base directory for this project component
+extract_dir <- here("analyses", "tasks", "1_extract")
+
+## For development (when knitting, these will be sourced as children
+## In the section "Functions for finding effect sizes...")
+## These source() calls must be commented out when knitting
+source(knitr::purl(here(extract_dir, "lib", "es_functions.Rmd"), quiet = TRUE))
+source(here("analyses", "lib", "ci_functions.R"))
+```
+
+<!-- ## Blank (collapse) {.active} -->
+
+# Effect size calculations {.tabset}
+
+```{r init_results_tbl, include = F}
+## Initialize results table
+es <- tibble(
+             study = character(),
+             task = character(),
+             measure = character(),
+             h = character(),
+             rl_sm = character(),
+             n = integer(),
+             n1 = integer(),
+             n2 = integer(),
+             es_type = factor(),
+             lower = numeric(),
+             effect = numeric(),
+             upper = numeric(),
+             notes = character(),
+             include = logical()
+             )
+```
+
+Note on coding effect directions: in all analyses, right/strong handers are coded as "1", mixed/left handers are coded as "0" (and, right/strong handers are coded as "n1"/"m1"..., mixed/left handers are "n2"/m2"...).
+
+
+## Bosch 2013 (TTCT-F)
+```{r child = here(extract_dir, "components", "bosch_2013_ttct-f.Rmd")}
+```
+
+## Burke et al. 1989 (TTCT-F)
+```{r child = here(extract_dir, "components", "burke_1989_ttct-f.Rmd")}
+```
+
+## Burke et al. 1989 (TTCT-V)
+```{r child = here(extract_dir, "components", "burke_1989_ttct-v.Rmd")}
+```
+
+## Coren 1995 (AUT)
+```{r child = here(extract_dir, "components", "coren_1995_aut.Rmd")}
+```
+
+## Falleta 1986 (TTCT-F)
+```{r child = here(extract_dir, "components", "falleta_1986_ttct-f.Rmd")}
+```
+
+## Bosch 2013 (TTCT-V)
+```{r child = here(extract_dir, "components", "bosch_2013_ttct-v.Rmd")}
+```
+
+## Everatt 1999 (AUT)
+```{r child = here(extract_dir, "components", "everatt_1999_aut.Rmd")}
+```
+
+## Everatt 1999 (TTCT-F)
+```{r child = here(extract_dir, "components", "everatt_1999_ttct-f.Rmd")}
+```
+
+## Feen et al. 2020 (AUT)
+```{r child = here(extract_dir, "components", "feen_2020_aut.Rmd")}
+```
+
+## Felton 2017 (RAT)
+```{r child = here(extract_dir, "components", "felton_2017_rat.Rmd")}
+```
+
+## Felton 2017 (AUT)
+```{r child = here(extract_dir, "components", "felton_2017_aut.Rmd")}
+```
+
+## Folley 2006 (AUT)
+```{r child = here(extract_dir, "components", "folley_2006_aut.Rmd")}
+```
+
+## Hattie & Fitzgerald 1983 (RAT)
+```{r child = here(extract_dir, "components", "hattie_1983_rat.Rmd")}
+```
+
+## Hattie & Fitzgerald 1983 (TTCT-F)
+```{r child = here(extract_dir, "components", "hattie_1983_ttct-f.Rmd")}
+```
+
+## Hattie & Fitzgerald, 1983 (TTCT-V)
+```{r child = here(extract_dir, "components", "hattie_1983_ttct-v.Rmd")}
+```
+
+## Jones et al. 2011 (AUT)
+```{r child = here(extract_dir, "components", "jones_2011_aut.Rmd")}
+```
+
+## Jones et al. 2011 (RAT)
+```{r child = here(extract_dir, "components", "jones_2011_rat.Rmd")}
+```
+
+## Katz 1980 (RAT)
+```{r child = here(extract_dir, "components", "katz_1980_rat.Rmd")}
+```
+
+## Katz 1980 (TTCT-V)
+```{r child = here(extract_dir, "components", "katz_1980_ttct-v.Rmd")}
+```
+
+## Katz 1980 (TTCT-F)
+```{r child = here(extract_dir, "components", "katz_1980_ttct-f.Rmd")}
+```
+
+## Newland 1981 (TTCT-F)
+```{r child = here(extract_dir, "components", "newland_1981_ttct-f.Rmd")}
+```
+
+## Turner 2016 (RAT)
+```{r child = here(extract_dir, "components", "turner_2016_rat.Rmd")}
+```
+
+## Turner 2016 (AUT)
+```{r child = here(extract_dir, "components", "turner_2016_aut.Rmd")}
+```
+
+## Turner 2017 (RAT)
+```{r child = here(extract_dir, "components", "turner_2017_rat.Rmd")}
+```
+
+## Shobe et al. 2009 (AUT)
+```{r child = here(extract_dir, "components", "shobe_2009_aut.Rmd")}
+```
+
+## Stewart & Clayson 1980 (TTCT-F)
+```{r child = here(extract_dir, "components", "stewart_1980_ttct-f.Rmd")}
+```
+
+## Zickert et al. 2018 (AUT)
+```{r child = here(extract_dir, "components", "zickert_2018_aut.Rmd")}
+```
+
+## Blank (collapse) {.active}
+
+# Results {.tabset}
+
+```{r, include = F}
+pal <- brewer.pal(9, "Pastel1")
+```
+
+
+```{r, include = F}
+## Make "study" a factor
+es <- es %>% mutate(study = as.factor(study))
+
+## Make a column with group name labels
+es <- es %>%
+  mutate(es_type_labels = case_when(
+            es_type == "d" ~ "Group differences: Cohen's D",
+            es_type == "rho" ~ "Correlations: Pearson's rho",
+            es_type == "rho_p" ~ "Correlations: Pearson's rho (partial)",
+            es_type == "beta" ~ "Correlations: Regression Coeffient β"
+            )
+        )
+
+## Calculate total n for all studies
+es <- es %>%
+  mutate(n = case_when(
+                       is.na(n) ~ (n1 + n2),
+                       TRUE ~ n
+                       )
+  )
+
+## Recode study names
+es <- es |>
+  mutate(study = study |>
+      recode("jones_2011" = "Jones et al. (2011)",
+             "coren_1995" = "Coren (1995)",
+             "felton_2017" = "Felton (2017)",
+             "folley_2006" = "Folley (2006)",
+             "everatt_1999" = "Everatt et al. (1999)",
+             "zickert_2018" = "Zickert et al. (2018)",
+             "falleta_1986" = "Falleta (1986)",
+             "bosch_2013" = "Bosch (2013)",
+             "turner_2016" = "Turner (2016)",
+             "turner_2017" = "Turner et al. (2017)",
+             "katz_1980" = "Katz (1980)",
+             "hattie_1983" = "Hattie & Fitzgerald (1983)",
+             "shobe_2009" = "Shobe et al. (2009)",
+             "feen_2020" = "Feen et al. (2020)",
+             "newland_1981" = "Newland (1981)",
+             "stewart_1980" = "Stewart & Clayson (1980)",
+             "burke_1989" = "Burke et al. (1989)"
+             )
+  )
+
+## Write final table to file
+extracted_effects <- es %>%
+  filter(include == 1) %>%
+  select(study, task, measure, h, rl_sm, n, n1, n2,
+         es_type, lower, effect, upper, notes)
+write_csv(extracted_effects, here(extract_dir, "data", "output", "extracted_effects.csv"))
+```
+
+The columns "lower" and "upper" are 95% CI bounds around effect sizes. "h" is handedness measure, and "rl_sm" shows whether the effect reflects handedness direction ("R/L": right/left) or strength ("S/M": strong/mixed). Positive effect sizes indicate a right- or strong-hander advantage. "n1" represents right/strong handers, "n2", mixed/left handers.
+
+Effect sizes and confidence intervals are rounded to the 3rd decimal, with trailing zeroes removed.
+
+## Full table (All tasks) {.active}
+```{r, echo = F}
+# Make single table grouped by effect size type and study.
+
+## Make a column with group name labels
+es <- es %>%
+  mutate(es_type_labels = case_when(
+            es_type == "d" ~ "Group differences: Cohen's D",
+            es_type == "d_p" ~ "Group differences: Cohen's D (partial)",
+            es_type == "rho" ~ "Correlations: Pearson's ρ",
+            es_type == "rho_p" ~ "Correlations: Pearson's ρ (partial)",
+            es_type == "beta" ~ "Correlations: Regression Coeffient β"
+            )
+        )
+
+
+## Display table with column labels
+es %>%
+  filter(include == 1) %>%
+  select(es_type_labels, study, task, measure, h, rl_sm, n, n1, n2, lower, effect, upper, notes) %>%
+  arrange(task, study, measure, effect) %>%
+  pretty_table(title = "All divergent thinking tasks", groupname_col = "es_type_labels") %>%
+  data_color(columns = study,
+             colors = scales::col_factor(palette = pal,
+                domain = NULL)
+            ) %>%
+  data_color(
+    columns = c(lower, effect, upper),
+    colors = scales::col_bin(
+        bins = 3,
+        na.color = "#f7f7f7",
+      palette = c(
+        "#f1b6da", "#f7f7f7", "#b8e186"),
+      domain = c(-2.7, 2.7))
+  )
+```
+
+## RAT
+
+```{r, echo = F}
+es %>%
+  filter(include == 1 & task == "RAT") %>%
+  select(es_type_labels, study, task, measure, h, rl_sm, n, n1, n2, lower, effect, upper, notes) %>%
+  arrange(task, study, measure, effect) %>%
+  pretty_table(title = "RAT", groupname_col = "es_type_labels") %>%
+  data_color(columns = study,
+             colors = scales::col_factor(palette = pal,
+                domain = NULL)
+            ) %>%
+  data_color(
+    columns = c(lower, effect, upper),
+    colors = scales::col_bin(
+        bins = 3,
+        na.color = "#f7f7f7",
+      palette = c(
+        "#f1b6da", "#f7f7f7", "#b8e186"),
+      domain = c(-2.7, 2.7))
+  )
+```
+
+## AUT
+```{r, echo = F}
+es %>%
+  filter(include == 1 & task == "AUT") %>%
+  select(es_type_labels, study, task, measure, h, rl_sm, n, n1, n2, lower, effect, upper, notes) %>%
+  arrange(task, study, measure, effect) %>%
+  pretty_table(title = "AUT", groupname_col = "es_type_labels") %>%
+  data_color(columns = study,
+             colors = scales::col_factor(palette = pal,
+                domain = NULL)
+            ) %>%
+  data_color(
+    columns = c(lower, effect, upper),
+    colors = scales::col_bin(
+        bins = 3,
+        na.color = "#f7f7f7",
+      palette = c(
+        "#f1b6da", "#f7f7f7", "#b8e186"),
+      domain = c(-2.7, 2.7))
+  )
+```
+
+## TTCT-F
+
+```{r, echo = F}
+es %>%
+  filter(include == 1 & task == "TTCT(F)") %>%
+  select(es_type_labels, study, task, measure, h, rl_sm, n, n1, n2, lower, effect, upper, notes) %>%
+  arrange(task, study, measure, effect) %>%
+  pretty_table(title = "TTCT-F", groupname_col = "es_type_labels") %>%
+  data_color(columns = study,
+             colors = scales::col_factor(palette = pal,
+                domain = NULL)
+            ) %>%
+  data_color(
+    columns = c(lower, effect, upper),
+    colors = scales::col_bin(
+        bins = 3,
+        na.color = "#f7f7f7",
+      palette = c(
+        "#f1b6da", "#f7f7f7", "#b8e186"),
+      domain = c(-2.7, 2.7))
+  )
+```
+
+## TTCT-V
+
+```{r, echo = F}
+es %>%
+  filter(include == 1 & task == "TTCT(V)") %>%
+  select(es_type_labels, study, task, measure, h, rl_sm, n, n1, n2, lower, effect, upper, notes) %>%
+  arrange(task, study, measure, effect) %>%
+  pretty_table(title = "TTCT-V", groupname_col = "es_type_labels") %>%
+  data_color(columns = study,
+             colors = scales::col_factor(palette = pal,
+                domain = NULL)
+            ) %>%
+  data_color(
+    columns = c(lower, effect, upper),
+    colors = scales::col_bin(
+        bins = 3,
+        na.color = "#f7f7f7",
+      palette = c(
+        "#f1b6da", "#f7f7f7", "#b8e186"),
+      domain = c(-2.7, 2.7))
+  )
+```
+

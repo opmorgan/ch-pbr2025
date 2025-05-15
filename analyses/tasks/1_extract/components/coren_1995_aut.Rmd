@@ -1,0 +1,248 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Coren, S. (1995). Differences in Divergent Thinking as a Function of Handedness and Sex. The American Journal of Psychology, 108(3), 311. https://doi.org/10.2307/1422892
+
+The AUT was scored only on fluency, the number of responses that each person came up with:
+
+"n, divergent thinking measures have been presumed to be
+ measures of creativity. One of the most popular of these tests is the Alternate
+ Uses Test, where subjects are required to find novel uses for common objects.
+ The variant used in this study was Form A (Christensen, Guilford, Merrifield,
+ & Wilson, 1960). It consists of three parts, each of which contains three
+ common items (e.g., a shoe) and space for up to six alternative uses per
+ item. Each part is timed at 4 min. The score is simply the number of novel
+ uses for each item that the participant generates."
+
+The Authors report means and SD for men and women, for each of four handedness groups. However, they do not report n for each group (except for men and women), which makes it impossible to aggregate means and SDs exactly.
+
+For analysis, assume equal in each handedness group, and calculate overall means/SDs for right vs. left, strong vs. mixed handers.
+
+### {.tabset}
+
+```{r}
+study <- "coren_1995"
+task <- "AUT"
+```
+```{r}
+handedness_measure <- "LPI"
+es_type <- "d"
+measure <- "Fluency"
+```
+
+```{r}
+## Load data
+input <- read_csv(here(extract_dir, "data", "input", "coren_1995_aut.csv"))
+```
+
+#### Assume equal n for each handedness group {.tabset}
+
+Code assumed n for each handedness group.
+```{r}
+n_total <- 556
+## Assuming equal n, each of the four handedness groups has 139
+n_male <- 231
+## Assuming equal n and rounding down, males have 57 in each group
+## Assuming equal n, males have 58 in three goups, 57 in one
+## I will assume that the strong left group has 57
+n_female <- 325
+## Assuming equal n and rounding down, females have 81 in each group
+## Assuming equal n, females have 81 in three groups, 82 in one.
+## I will assume that the strong right group has 82.
+
+assume_n <- input %>%
+  filter(handedness != "all") %>%
+  mutate(n = case_when(
+                       handedness == "strong_right" & sex == "m" ~ 58,
+                       handedness == "mixed_right"  & sex == "m" ~ 58,
+                       handedness == "mixed_left"   & sex == "m" ~ 58,
+                       handedness == "strong_left"  & sex == "m" ~ 57,
+                       handedness == "strong_right" & sex == "f" ~ 82,
+                       handedness == "mixed_right"  & sex == "f" ~ 81,
+                       handedness == "mixed_left"   & sex == "f" ~ 81,
+                       handedness == "strong_left"  & sex == "f" ~ 81
+                       )
+)
+
+## Review assumed n's
+assume_n %>% pretty_table(title = str_c(study, ", ", task, ": assumed group Ns"))
+```
+
+Calculate group means, SDs, for each handedness group, collapsing across sex.
+Store this data in a new table, and save to a file: "data/proc/...proc_1.csv"
+```{r}
+
+proc_1 <- tibble::tibble(n = numeric(),
+                         handedness = factor(),
+                         mean = numeric(),
+                         sd = numeric()
+                         )
+
+## Define function to calculate stats for each handedness group, across sex
+## Input: n, handedness group, input data for coren_1995_AUT
+## Return: a tibble row with columns n, handedness, mean, sd
+## Depends on: tibble, lib/util.R
+stats_across_sex <- function(data, h_grp) {
+  ## x1 is coded for males, x2 for females
+  m1 <- data %>% filter(handedness == h_grp & sex == "m") %>% .[["mean"]]
+  m2 <- data %>% filter(handedness == h_grp & sex == "f") %>% .[["mean"]]
+  n1 <- data %>% filter(handedness == h_grp & sex == "m") %>% .[["n"]]
+  n2 <- data %>% filter(handedness == h_grp & sex == "f") %>% .[["n"]]
+  sd1 <- data %>% filter(handedness == h_grp & sex == "m") %>% .[["sd"]]
+  sd2 <- data %>% filter(handedness == h_grp & sex == "f") %>% .[["sd"]]
+
+  stats_row <- tibble::tibble(n = n1 + n2,
+                     handedness = h_grp,
+                     mean = agg_mean_cochrane(m1 = m1, m2 = m2, n1 = n1, n2 = n2),
+                     sd = agg_sd_cochrane(m1 = m1, m2 = m2, n1 = n1, n2 = n2,
+                                           sd1 = sd1, sd2 = sd2)
+                     )
+
+  return(stats_row)
+}
+
+h_grps <- unique(assume_n[["handedness"]])
+for (j in 1:length(h_grps)) {
+  stats_row <- stats_across_sex(assume_n, h_grps[[j]])
+  proc_1 <- proc_1 %>% add_row(stats_row)
+}
+
+write_csv(proc_1, here(extract_dir, "data", "proc", str_c(study, "_", task, "_proc_1.csv")))
+
+## Review calculated group means, SDs
+proc_1 %>% pretty_table(title = str_c(study, ", ", task, ": calculated group stats (all 4 groups)"))
+```
+
+```{r}
+## Define function to calculate stats across handedness groups
+## Input: proc_1, handedness groups to collapse, label for new group
+## Return: a tibble row with columns n, handedness, mean, sd
+## Depends on: tibble, lib/util.R
+stats_across_h_grps <- function(proc_1, h_grps, h_grp_new) {
+
+  n1 <- proc_1 %>% filter(handedness == h_grps[[1]]) %>% .[["n"]]
+  n2 <- proc_1 %>% filter(handedness == h_grps[[2]]) %>% .[["n"]]
+  m1 <- proc_1 %>% filter(handedness == h_grps[[1]]) %>% .[["mean"]]
+  m2 <- proc_1 %>% filter(handedness == h_grps[[2]]) %>% .[["mean"]]
+  sd1 <- proc_1 %>% filter(handedness == h_grps[[1]]) %>% .[["sd"]]
+  sd2 <- proc_1 %>% filter(handedness == h_grps[[2]]) %>% .[["sd"]]
+
+  stats_row <- tibble::tibble(n = n1 + n2,
+                          handedness = h_grp_new,
+                          mean = agg_mean_cochrane(m1 = m1, m2 = m2, n1 = n1, n2 = n2),
+                          sd = agg_sd_cochrane(m1 = m1, m2 = m2, n1 = n1, n2 = n2,
+                                               sd1 = sd1, sd2 = sd2)
+  )
+  return(stats_row)
+}
+```
+
+#### Right/left
+
+Calculate group means, SDs for Right vs. Left handers.
+(Right vs. left means strong right, mixed right vs. strong left, mixed left)
+Save results to file: "data/proc/...proc_2_rl.csv"
+```{r}
+proc_2_rl <- tibble::tibble(n = numeric(),
+                         handedness = factor(),
+                         mean = numeric(),
+                         sd = numeric()
+                         )
+
+
+h_grps <- c("strong_right", "mixed_right")
+h_grp_new <- "right"
+proc_2_rl <- proc_2_rl %>%
+  add_row(stats_across_h_grps(proc_1, h_grps, h_grp_new))
+
+h_grps <- c("strong_left", "mixed_left")
+h_grp_new <- "left"
+proc_2_rl <- proc_2_rl %>%
+  add_row(stats_across_h_grps(proc_1, h_grps, h_grp_new))
+
+write_csv(proc_2_rl, here(extract_dir, "data", "proc", str_c(study, "_", task, "_proc_2_rl.csv")))
+
+## Review calculated group means, SDs
+proc_2_rl %>% pretty_table(title = str_c(study, ", ", task, ": calculated group stats (right/left)"))
+```
+
+Find and report effect size.
+```{r}
+n1 <- proc_2_rl %>% filter(handedness == "right")  %>% .[["n"]]
+n2 <- proc_2_rl %>% filter(handedness == "left")  %>% .[["n"]]
+m1 <- proc_2_rl %>% filter(handedness == "right")  %>% .[["mean"]]
+m2 <- proc_2_rl %>% filter(handedness == "left")  %>% .[["mean"]]
+sd1 <- proc_2_rl %>% filter(handedness == "right")  %>% .[["sd"]]
+sd2 <- proc_2_rl %>% filter(handedness == "left")  %>% .[["sd"]]
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = "R/L",
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From Ms, SDs, approx Ns (Agg.)", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure, " (right/left)"))
+```
+
+#### Strong/mixed
+
+Calculate group means, SDs for Strong vs. Mixed handers.
+(Strong vs. mixed means strong right, strong left vs. mixed right, mixed left)
+Save results to file: "data/proc/...proc_2_sm.csv"
+
+```{r}
+proc_2_sm <- tibble::tibble(n = numeric(),
+                         handedness = factor(),
+                         mean = numeric(),
+                         sd = numeric()
+                         )
+
+
+h_grps <- c("strong_right", "strong_left")
+h_grp_new <- "strong"
+proc_2_sm <- proc_2_sm %>%
+  add_row(stats_across_h_grps(proc_1, h_grps, h_grp_new))
+
+h_grps <- c("mixed_right", "mixed_left")
+h_grp_new <- "mixed"
+proc_2_sm <- proc_2_sm %>%
+  add_row(stats_across_h_grps(proc_1, h_grps, h_grp_new))
+
+write_csv(proc_2_sm, here(extract_dir, "data", "proc", str_c(study, "_", task, "_proc_2_sm.csv")))
+
+## Review calculated group means, SDs
+proc_2_sm %>% pretty_table(title = str_c(study, ", ", task, ": calculated group stats (strong/mixed)"))
+```
+
+Find and report effect size.
+```{r}
+n1 <- proc_2_sm %>% filter(handedness == "strong")  %>% .[["n"]]
+n2 <- proc_2_sm %>% filter(handedness == "mixed")  %>% .[["n"]]
+m1 <- proc_2_sm %>% filter(handedness == "strong")  %>% .[["mean"]]
+m2 <- proc_2_sm %>% filter(handedness == "mixed")  %>% .[["mean"]]
+sd1 <- proc_2_sm %>% filter(handedness == "strong")  %>% .[["sd"]]
+sd2 <- proc_2_sm %>% filter(handedness == "mixed")  %>% .[["sd"]]
+
+
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = "S/M",
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From Ms, SDs, approx Ns (Agg.)", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure, " (strong/mixed)"))
+```

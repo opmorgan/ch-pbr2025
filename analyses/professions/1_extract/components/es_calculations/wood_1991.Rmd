@@ -1,0 +1,81 @@
+Wood, C. J., & Aggleton, J. P. (1991). Occupation and handedness: An examination of architects and mail survey biases. Canadian Journal of Psychology, 45(3), 10.
+[[PDF](https://drive.google.com/file/d/1BnsrUUB9N_8p70F24ZeolRm8cmvj-m-v/view?usp=sharing)]
+
+The authors report the frequency of left-handedness (on the Oldfield scale, 8 items, 3 point) among professional architects surveyed by mail. The authors report the frequenncy of left/either/right reponses to each scale item, as well as the frequency of left handedness on a 0-split (Oldfield's laterality quotient, 1971). Here, writing hand is used for the R/L comparison. 
+
+The authors also report data from undergraduates using the same handedness measure, reporting the Oldfield measure for men and writing hand responses for women. They report the Oldfield handedness groups for both men and women in another group of non-architecture undergrads, of approximately the same age, from the same area, surveyed by the same method. To estimate odds ratios, the present analysis uses (1) the Oldfeild 0-split frequencies, comparing between the male architecture students and male non-architecture undergrads; and (2) the writing hand data, comparing female architecture students and general undergrads (0-split data are not reported for female students).
+
+The numbers do not add up for architecture students -- the authors report 105 total students, but 78 men and 25 women. (Which would add up to 105). Using the reported percentage and n = 25 yields numbers that are relatively far from round numbers, but assuming that there were really 27 women yields closely round numbers. So, the present analysis assumes that the reported total n is correct, and there were 78 men and 27 women.
+
+```{r, include = F}
+# #### Professional architects
+# ## Handedness measured by writing hand
+# n <- 257
+# ## Table 1 shows writing hand data for the 236 male architects
+# n <- 236
+# perc_right <- 89
+# perc_left <- 11
+# perc_mixed <- 0
+# (n_left <- (perc_left*n)/100) # 26
+# ## The text reports writing hand data for the 21 female architects
+# n <- 21
+# perc_left <- 4.8
+# perc_mixed <- 0
+# (n_left <- (perc_left*n)/100) # 1
+# ## Total
+# n <- 257
+# (n_left <- (1 + 26)) # 27
+# (n_mixed <- 0 + 0) # 0
+# (n_right <- n - n_left - n_mixed) # 209
+#
+# #### Students of architecture
+# ## Handedness measured by writing hand
+# n <- 105 # Numbers do not add up - reported as 78 males, 25 females (103)
+# ## Men (Oldfield 0-split)
+# ## (The text reports 0-split data for the 78 male students)
+# n <- 78
+# perc_left <- 11.5
+# (n_left <- (perc_left*n)/100) # 9
+# ## Women (Writing hand)
+# ## (The text reports writing hand data for the 27 female students)
+# n <- 27
+# perc_left <- 3.8
+# perc_mixed <- 7.4
+# (n_left <- (perc_left*n)/100) # 1
+# (n_mixed <- (perc_mixed*n)/100) # 2
+#
+#
+# #### Control: non-architecture undergrads (Stage 1)
+# ## Men (Oldfield 0-split)
+# n <- 221
+# perc_left <- 12.7
+# (n_left <- (perc_left*n)/100) # 28
+# ## Women (Writing hand)
+# n <- 149
+# perc_left <- 14.8
+# perc_mixed <- 1.3
+# (n_left <- (perc_left*n)/100) # 22
+# (n_mixed <- (perc_mixed*n)/100) # 2
+```
+
+```{r}
+## Load and display input data
+study <- "wood_1991"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+For control group comparisons
+```{r, results = "markup"}
+sub <- input %>% filter(!(control_group %in% c("None", "none", NA)))
+sub$control_group
+es_study <- calculate_es(sub, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

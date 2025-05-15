@@ -1,0 +1,88 @@
+Byrne, B. (1974). Handedness and Musical Ability. British Journal of Psychology, 65(2), 279–281. https://doi.org/10.1111/j.2044-8295.1974.tb01402.x
+[[PDF](https://drive.google.com/file/d/1hOW0vQfH7IlvXxVCbbT3axg3nWQ19yVe/view?usp=sharing)]
+
+This study measured the handedness of singers and instrumental musicians, compared to general students ("unselected students").
+
+Handedness was measured using the EHI, and participants were put in three bins: left (less than -50); mixed (between -50 and +50), and right (greater than +50). The present analysis reports a R/L comparison (SR/SL), and a S/M comparison ([SR+SL]/M)
+
+### Calculate frequencies from reported statistics
+```{r}
+## Calculate the frequency of left, mixed, and right handedness based on percentages in Table 1
+#### Singers
+n_total <- 134
+perc_left <- 5
+perc_mixed <- 19
+perc_right <- 76
+(n_left <- (perc_left*n_total)/100) # 6.7 (7)
+(n_mixed <- (perc_mixed*n_total)/100) # 25.46 (25)
+(n_right <- (perc_right*n_total)/100) # 101.84 (102)
+## Check total
+(total <- 7+25+102) # 134 (good)
+## R/L (SR/SL)
+(n_R <- 102)
+(n_L <- 7)
+(n_total <- n_R + n_L) # 109
+## S/M
+(n_S <- 102 + 7) # 109
+(n_M <- 25)
+(n_total <- n_S + n_M) # 134
+
+#### Instrumental Musicians
+n_total <- 108
+perc_left <- 3
+perc_mixed <- 30.5
+perc_right <- 66.5
+(n_left <- (perc_left*n_total)/100) # 3.24 (3)
+(n_mixed <- (perc_mixed*n_total)/100) # 32.94 (33)
+(n_right <- (perc_right*n_total)/100) # 71.82 (72)
+## Check total
+(total <- 3+33+72) # 108 (good)
+## R/L (SR/SL)
+(n_R <- 72)
+(n_L <- 3)
+(n_total <- n_R + n_L) # 75
+## S/M
+(n_S <- 72 + 3) # 75
+(n_M <- 33)
+(n_total <- n_S + n_M) # 108
+
+#### General students (controls)
+n_total <- 864
+perc_left <- 4.5
+perc_mixed <- 21.5
+perc_right <- 74
+(n_left <- (perc_left*n_total)/100) # 38.33 (38)
+(n_mixed <- (perc_mixed*n_total)/100) # 185.76 (186)
+(n_right <- (perc_right*n_total)/100) # 639.36 (640)
+## Check total
+(total <- 38+186+640) # 864 (good)
+## R/L (SR/SL)
+(n_R <- 640)
+(n_L <- 38)
+(n_total <- n_R + n_L) # 678
+## S/M
+(n_S <- 640 + 38) # 678
+(n_M <- 186)
+(n_total <- n_S + n_M) # 864
+```
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "byrne_1974"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```
+

@@ -1,0 +1,148 @@
+---
+title: "Professions: Extract effect sizes (Creative Professions and Handedness) - Collapse Artist Occupations"
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    highlight: zenburn
+    editor_options:
+      chunk_output_type: console
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F,
+                      fig.align = "center", fig.width = 9,
+                      fig.height = 6, results = "asis")
+options(knitr.kable.NA = "")
+```
+
+```{r lib, include = F}
+## Test that this file exists in the expected place
+## relative to project root
+here::i_am("analyses/professions/1_extract/extract.Rmd",
+           uuid = "41aed3d4-9a8b-438b-berd-811c655d9323")
+
+## Load Packages
+library(here)
+library(tidyverse)
+library(gt) ## To print tables
+library(RColorBrewer) ## For categorical color palette
+requireNamespace("epitools") ## To find OR/RR, CI
+requireNamespace("PropCIs") ## To find score CI (Felix's rec)
+requireNamespace("psych") # To find CI around cohen's D
+
+## Source common (project-level) functions
+source(here("analyses", "lib", "util.R")) # format_p(), numformat()
+source(here("analyses", "lib", "tables.R")) # pretty_table()
+source(here("analyses", "lib", "agg_functions.R"))
+
+## Declare base directory for this project component
+extract_dir <- here("analyses", "professions", "1_extract")
+
+## Source analysis-specific functions
+source(here(extract_dir, "lib", "init_es_table.R"))
+source(here(extract_dir, "lib", "load_input.R"))
+source(here(extract_dir, "lib", "calculate_es.R"))
+source(here(extract_dir, "lib", "es_functions.R"))
+```
+
+# Procedure {.tabset}
+
+Odds ratios were constructed based on frequency tables from each included studies. Confidence intervals for odds ratios were calculated with Agresti's score confidence interval formula, using the package PropCIs.
+
+Agresti, A. (2013). An introduction to categorical data analysis (3rd ed). Wiley-Interscience.
+
+# Effect size calculations {.tabset .tabset-pills}
+
+An odds ratio greater than 1 indicates lefty/mixedy advantage.
+"PL_\*" shows the percentage of lefties in creative and control groups.
+"lower" and "upper" are 95% confidence intervals.
+"group1" marks the creative group, "group2" the control group.
+
+```{r, include = F}
+## Initialize results table
+es <- init_es_table()
+```
+
+## Peterson 1979 (Art/Architecture; Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "peterson_1979.Rmd")}
+```
+
+## Mebert & Michel 1980 (Art) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "mebert_1980.Rmd")}
+```
+
+## Coren & Porac 1982 (Art) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "coren_1982.Rmd")}
+```
+
+## Giotakos 2004 (Art/Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "giotakos_2004.Rmd")}
+```
+
+## Shettel-Neuber & O'Reilly 1983 (Art; Architecture) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "shettel-neuber_1983.Rmd")}
+```
+
+## Preti 2007 (Art; Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "preti_2007.Rmd")}
+```
+
+
+## Schacter & Ransil 1994 (Architecture) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "schacter_1996.Rmd")}
+```
+
+## Gotestam 1990 (Architecture; Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "gotestam_1990.Rmd")}
+```
+
+## Wood & Aggleton 1991 (Architecture) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "wood_1991.Rmd")}
+```
+
+## Aggleton et al. 1994 (Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "aggleton_1994.Rmd")}
+```
+
+## Quinan 1922 (Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "quinan_1922.Rmd")}
+```
+
+## Fry 1990 (Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "fry_1990.Rmd")}
+```
+
+## Oldfield 1969 (Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "oldfield_1969.Rmd")}
+```
+
+## Byrne 1974 (Music) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "byrne_1974.Rmd")}
+```
+
+## Cosenza & Mignoti 1993 (Music, Art, Architecture) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "cosenza_1993.Rmd")}
+```
+
+## Goodman 2014 / NLSY79, NLSY97 (Music, Art Architecture) {.tabset}
+```{r child = here(extract_dir, "components", "es_calculations", "goodman_2014.Rmd")}
+```
+
+## Blank (collapse) {.active}
+
+# Results {.tabset}
+```{r child = here(extract_dir, "components", "results.Rmd")}
+```
+
+<br>
+<br>

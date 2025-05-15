@@ -1,0 +1,74 @@
+```{r}
+label_var <- "All studies by ES type"
+```
+```{r}
+pool_table_part <- init_pool_table()
+```
+
+```{r, results = "markup", cache = T}
+## Find pooled effects
+
+## Separating partial and simple effects
+sub <- es_individual
+partials_var <- "separate"
+es_type_vars <- sub[["es_type"]] %>% unique()
+task_var <- "all"
+measure_var <- "all"
+
+
+for(es_type_var in es_type_vars) {
+  sub_meta <- sub %>% filter(es_type == es_type_var)
+  m1 <- meta::metagen(data = sub_meta, studlab = study, TE = effect,
+                      seTE = se, sm = "SMD")
+  for (model_type_var in c("fixed", "random")) {
+    pool_row <- metagen_makerow(m1, model_type = model_type_var,
+                                 partials = partials_var, task = task_var,
+                                 measure = measure_var, es_type = es_type_var,
+                                 label = label_var)
+    pool_table_part <- pool_table_part %>% add_row(pool_row)
+  }
+}
+```
+```{r, cache = T}
+## Collapsing partial and simple effects
+sub <- es_individual_collapse_partial
+
+es_type_vars <- sub[["es_type"]] %>% unique()
+partials_var <- "collapsed"
+
+for(es_type_var in es_type_vars) {
+  sub_meta <- sub %>% filter(es_type == es_type_var)
+  m1 <- meta::metagen(data = sub_meta, studlab = study, TE = effect,
+                      seTE = se, sm = "SMD")
+  for (model_type_var in c("fixed", "random")) {
+    pool_row <- metagen_makerow(m1, model_type = model_type_var,
+                                 partials = partials_var, task = task_var,
+                                 measure = measure_var, es_type = es_type_var,
+                                 label = label_var)
+    pool_table_part <- pool_table_part %>% add_row(pool_row)
+  }
+}
+
+## Make function to remove duplicates (collapsed effects calculated
+## when not needed)
+undup <- function(pool_table) {
+  unduped <- pool_table %>%
+    # filter(label == label_var) %>%
+    distinct(task, measure, N, model_type, lower, .keep_all=TRUE) %>%
+    arrange(label, task, measure, es_type, partials, effect)
+  return(unduped)
+}
+
+pool_table_part <- pool_table_part %>% undup()
+
+pool_table <- pool_table %>% add_row(pool_table_part)
+```
+```{r}
+## Print summary table
+disp_tbl <- pool_table %>% filter(label == label_var) %>% select(-label)
+disp_tbl %>% pool_table_gt(title = label_var, groupname_col = "model_type")
+```
+```{r, results = "markup"}
+## Print full metagen summaries to console
+print_metagen_summaries(disp_tbl)
+```

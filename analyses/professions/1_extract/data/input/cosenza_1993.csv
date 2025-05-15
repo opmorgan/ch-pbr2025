@@ -1,0 +1,7 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Students,Art,Fine Arts applicants,Non-art/music/ architecture applicants,R/L,31,10422,4,1190,EHI,preference,SR/SL,1,0
+Students,Architecture,Architecture applicants,Non-art/music/ architecture applicants,R/L,347,10422,42,1190,EHI,preference,SR/SL,1,0
+Students,Music,Music applicants,Non-art/music/ architecture applicants,R/L,4,10422,2,1190,EHI,preference,SR/SL,1,0
+Students,Art,Fine Arts applicants,Non-art/music/ architecture applicants,S/M,51,16005,20,5583,EHI,preference,(SR+SL)/M,1,0
+Students,Architecture,Architecture applicants,Non-art/music/ architecture applicants,S/M,526,16005,179,5583,EHI,preference,(SR+SL)/M,1,0
+Students,Music,Music applicants,Non-art/music/ architecture applicants,S/M,10,16005,6,5583,EHI,preference,(SR+SL)/M,1,0

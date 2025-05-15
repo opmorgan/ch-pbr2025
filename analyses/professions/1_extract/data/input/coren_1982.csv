@@ -1,0 +1,3 @@
+pop,profession,creative_group,control_group,h,rl_sm,comparison_details,n_creative,n_left_creative,n_control,n_left_control,pref_success,include,exclude_rnr
+Students,Art/Science,Science/Visual  Art,Lang/Lit,13i_3pt,R/L,0 split,225,28,262,27,preference,1,0
+Students,Art/Science,Science/Visual  Art,Lang/Lit,13i_3pt,S/M,(SR + SL)/M,225,69,262,21,preference,1,0

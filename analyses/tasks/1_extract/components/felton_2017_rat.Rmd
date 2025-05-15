@@ -1,0 +1,82 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Felton, A. (2017). Interhemispheric Interaction and Creativity. [PhD Dissertation]
+
+Group means and SDs are reported for strong and mixed handers, defined by a median split on the absolute value of EHI handedness (70 in each group, based on df = 140 for two-sample t-test).
+
+For percent correct ("Accuracy"), reported numbers do not add up. Based on the means and SDs, there is a large, significant mixedy advantage (t = 3.8). But, the authors report a low t-value, 0.45. (And, SDs are extremely tight, compared to other RAT studies with similar sample size. For example, see Turner 2016). Could there be a typo in the table? I believe that most likely explanation is that the author accidentally presented SEM instead of SD: assuming this and calculating the true SD yields the reported t-value of 0.45.
+
+```{r}
+study <- "felton_2017"
+task <- "RAT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type = "d"
+```
+
+```{r}
+measure <- "Problems solved out of 21"
+
+## The authors seem to have accidentally reported SEM instead of SD.
+## To recover the SD, I will multiply "SEM" by sqrt(n)
+
+m_strong <- 56.09
+reported_sd_strong <- 1.90
+n_strong <- 71
+sd_strong <- reported_sd_strong * sqrt(n_strong)
+## Assuming the reported SEM, the actual SD is 16.01
+
+m_mixed <- 57.34
+reported_sd_mixed <- 2.01
+n_mixed <- 71
+sd_mixed <- reported_sd_mixed * sqrt(n_mixed)
+## Assuming authors reported SEM, the actual SD is 16.94
+
+d <- msd_to_d(m1 = m_strong, sd1 = sd_strong,
+              m2 = m_mixed, sd2 = sd_mixed)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_strong, n2 = n_mixed, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_strong, n2 = n_mixed,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, inferred SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+```{r}
+measure <- "Reaction time"
+
+m_strong <- 5449
+sd_strong <- 1035
+n_strong <- 71
+
+m_mixed <- 5447
+sd_mixed <- 1451
+n_mixed <- 71
+
+d <- msd_to_d(m1 = m_strong, sd1 = sd_strong,
+              m2 = m_mixed, sd2 = sd_mixed)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_strong, n2 = n_mixed, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_strong, n2 = n_mixed,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

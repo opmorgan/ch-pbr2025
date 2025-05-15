@@ -1,0 +1,29 @@
+
+Peterson, J. M., & Lansky, L. M. (1983). Success in Architecture: A Research Note. Perceptual and Motor Skills, 57(1), 222–222. https://doi.org/10.2466/pms.1983.57.1.222
+ [[PDF](https://drive.google.com/file/d/1-w90TCj7x4y7d77ufUKAAe99373eQFiR/view?usp=sharing)]
+
+This study reports on the same 77 students who were given tests of visuospatial ability in Peterson & Lansky 1980 [1], which is not included in this review. (It compared 1st to second year students -- I think that the first year vs. graduation rates for the same set of students is more relevant).
+
+The authors report the frequency of left-handedness in enrolled architecture students, and in the same cohort on graduation. Here, the graduating class is treated as a "creative" group, and the enrolled class as a control group. The handedness measure is unspecified, but participants are classified as right or left handers.
+
+[1] Peterson, J. M., & Lansky, L. M. (1980). Success in Architecture: Handedness and/or Visual Thinking.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "peterson_1983"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

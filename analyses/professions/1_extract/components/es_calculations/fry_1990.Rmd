@@ -1,0 +1,110 @@
+Fry, C. J. (1990). Left-handedness: Association with college major, familial sinistrality, allergies, and asthma. Psychological Reports.
+[[PDF](https://drive.google.com/file/d/1-bC8-habbKnXfQsEi-v5fujezYhusrbP/view?usp=sharing)]
+
+This study reports handedness of students from different departments:
+Accounting, Architecture, Industrial Design, Landscape architecture, Law, Microbiology, Music Theory/Composition
+
+Handedness is measured with the EHI. Mean scores and SDs are reported for each department, as well as the frequencies of left-handedness using a 0-split. (Table 1)
+
+The present analysis extracts (1) the frequency of 0-split left-handedness for music majors, compared to all others, and for architects, compared to all others, and (2) the mean handedness score for musicians, compared to all others, and for architect students, compared to all others.
+
+```{r, include = F}
+# #### Calculate handedness frequencies from percentages (Table 1)
+# ## Microbiology
+# n <- 67
+# perc_left <- 7.5
+# (n_left <- (n * perc_left) / 100) # 5
+#
+# ## Accounting
+# n <- 54
+# perc_left <- 9.3
+# (n_left <- (n * perc_left) / 100) # 5
+#
+# ## Industrial design
+# n <- 44
+# perc_left <- 11.4
+# (n_left <- (n * perc_left) / 100) # 5
+#
+# ## Landscape architecture
+# n <- 32
+# perc_left <- 15.6
+# (n_left <- (n * perc_left) / 100) # 5
+#
+# ## Architecture
+# n <- 69
+# perc_left <- 17.4
+# (n_left <- (n * perc_left) / 100) # 12
+#
+# ## Music Theory/comp
+# n <- 31
+# perc_left <- 19.4
+# (n_left <- (n * perc_left) / 100) # 6
+#
+# ## Law
+# n <- 69
+# perc_left <- 21.7
+# (n_left <- (n * perc_left) / 100) # 15
+```
+
+```{r, include = F}
+# ## Calculate pooled means, sd
+# ## Pool means, sds for non-music professions
+# ## Depends on: lib/agg_functions.R/agg_means_sds
+# agg_input <- tibble(n = c(67, 54, 44, 32, 69, 69),
+#                      m = c(66.9, 73.8, 61.7, 52.7, 56.3, 49.1),
+#                      sd = c(43.8, 43.7, 51.2, 62.6, 60.3, 66.3)
+#                      )
+#
+# (agg <- agg_means_sds(agg_input)) # 335, 60.1, 55.6
+#
+# ## Pool means, sds for non-architecture professions
+# agg_input <- tibble(n = c(67, 54, 44, 32, 31, 69),
+#                      m = c(66.9, 73.8, 61.7, 52.7, 47.2, 49.1),
+#                      sd = c(43.8, 43.7, 51.2, 62.6, 60.7, 66.3)
+#                      )
+#
+# (agg <- agg_means_sds(agg_input)) # 297, 59.7, 55.1
+```
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "fry_1990"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+Odds ratio results
+```{r}
+sub <- input %>%
+  filter(!is.na(n_left_control)) %>%
+  select(-m_creative, -m_control, -sd_creative, -sd_control)
+```
+```{r, results = "markup", cache = T}
+es_study <- calculate_es(sub, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```
+
+Cohen's D results
+```{r}
+sub <- input %>%
+  filter(!is.na(m_creative)) %>%
+  select(-n_left_control, -n_left_creative)
+```
+```{r, results = "markup", cache = T}
+es_study <- calculate_es(sub, study, OR = F, RR = F, freq = F, d = T)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

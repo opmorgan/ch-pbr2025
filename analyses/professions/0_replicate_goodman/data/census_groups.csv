@@ -1,0 +1,15 @@
+census_year,profession_group,code,occupation
+1980,Art,194,"Artists, performers, and related workers NEC"
+1980,Art,183,Authors
+1980,Art,185,Designers
+1980,Art,189,Photographers
+1980,Art,188,"Painters, sculptors, craft-artists, and artist printmakers"
+1980,Art,137,"Art, drama, and music teachers"
+1980,Architecture,43,"Architects, except naval"
+1980,Music,186,Musicians and composers
+2002,Art,2600,Artists and related workers
+2002,Art,2850,Writers and authors
+2002,Art,2630,Designers
+2002,Art,2910,Photographers
+2002,Architecture,1300,"Architects, except naval"
+2002,Music,2750,"Musicians, singers and related workers "

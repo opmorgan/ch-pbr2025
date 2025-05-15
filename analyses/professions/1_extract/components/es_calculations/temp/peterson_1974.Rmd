@@ -1,0 +1,23 @@
+Peterson, J. M., & Lansky, L. M. (1974). Left-handedness among architects: Some facts and speculation. Perceptual and Motor Skills, 38(2), 547–550. https://doi.org/10.2466/pms.1974.38.2.547 [[PDF](https://drive.google.com/file/d/1mG_iJb9dJr9G6D33oClpveDlmCUyV4FA/view?usp=sharing)]
+
+The authors report the frequency of left-handedness ("I am totally left-handed" or "I use either hand equally" on a 3-point self-report scale) among 17 architecture faculty and 484 architecture students.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "peterson_1974"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = F, RR = F, freq = T)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

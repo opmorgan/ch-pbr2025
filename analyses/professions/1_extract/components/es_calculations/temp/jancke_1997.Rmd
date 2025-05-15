@@ -1,0 +1,32 @@
+Jäncke, L., Schlaug, G., & Steinmetz, H. (1997). Hand skill asymmetry in professional musicians. Brain and Cognition, 34(3), 424–432. https://doi.org/10.1006/brcg.1997.0922
+[[PDF](https://drive.google.com/file/d/1e-ntcb4-LaT8w75CrWoRDoBfYhXvePvx/view?usp=sharing)]
+
+Handedness was measured using the Annett Handedness Preference Questionnaires
+Hand skill asymmetry was calculated based on performance on (1) a set of drawing tasks (HDT), and (2) a tapping task (TAP: number of taps in 20 seconds: [R-L]/[R+L]).
+
+31 strong right-hander musicians were compared to adult nonmusicians: 31 strong right handers, 31 mixed handers, and 31 strong left-handers.
+
+For the present analysis, consistent-handedness of right-handed musicians is compared to right-handed controls. The authors report means and standard deviations for each group, from which Cohen's D can be calculated.
+
+Note: the Cohen's D turns out to be exactly the same for each comparison. This is not a mistake; in each case, the reported group difference is exactly equal to the reported standard deviation for both groups.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "jancke_1997"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = F, RR = F, freq = F, d = T)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```
+

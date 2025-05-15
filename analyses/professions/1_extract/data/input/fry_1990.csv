@@ -1,0 +1,29 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,m_creative,m_control,sd_creative,sd_control,h,pref_success,comparison_details,include,exclude_rnr
+Students,Music,Music theory/composition,Microbiology,R/L,31,67,6,5,,,,,0-split,pref,R/L,0,0
+Students,Music,Music theory/composition,Accounting,R/L,31,54,6,5,,,,,0-split,pref,R/L,0,0
+Students,Music,Music theory/composition,Industrial Design,R/L,31,44,6,5,,,,,0-split,pref,R/L,0,0
+Students,Music,Music theory/composition,Landscape Architecture,R/L,31,32,6,5,,,,,0-split,pref,R/L,0,0
+Students,Music,Music theory/composition,Architecture,R/L,31,69,6,12,,,,,0-split,pref,R/L,0,0
+Students,Music,Music theory/composition,Law,R/L,31,69,6,15,,,,,0-split,pref,R/L,0,0
+Students,Music,Music theory/composition,Non-music,R/L,31,335,6,47,,,,,0-split,pref,R/L,1,0
+Students,Architecture,Architecture,Microbiology,R/L,69,67,12,5,,,,,0-split,pref,R/L,0,0
+Students,Architecture,Architecture,Accounting,R/L,69,54,12,5,,,,,0-split,pref,R/L,0,0
+Students,Architecture,Architecture,Industrial Design,R/L,69,44,12,5,,,,,0-split,pref,R/L,0,0
+Students,Architecture,Architecture,Landscape Architecture,R/L,69,32,12,5,,,,,0-split,pref,R/L,0,0
+Students,Architecture,Architecture,Music theory/composition,R/L,69,31,12,6,,,,,0-split,pref,R/L,0,0
+Students,Architecture,Architecture,Law,R/L,69,69,12,15,,,,,0-split,pref,R/L,0,0
+Students,Architecture,Architecture,Non-architecture,R/L,69,297,12,41,,,,,0-split,pref,R/L,1,0
+Students,Music,Music theory/composition,Microbiology,R/L,31,67,,,47.2,66.9,60.7,43.8,EHI,pref,R/L,0,0
+Students,Music,Music theory/composition,Accounting,R/L,31,54,,,47.2,73.8,60.7,43.7,EHI,pref,R/L,0,0
+Students,Music,Music theory/composition,Industrial Design,R/L,31,44,,,47.2,61.7,60.7,51.2,EHI,pref,R/L,0,0
+Students,Music,Music theory/composition,Landscape Architecture,R/L,31,32,,,47.2,52.7,60.7,62.6,EHI,pref,R/L,0,0
+Students,Music,Music theory/composition,Architecture,R/L,31,69,,,47.2,56.3,60.7,60.3,EHI,pref,R/L,0,0
+Students,Music,Music theory/composition,Law,R/L,31,69,,,47.2,49.1,60.7,66.3,EHI,pref,R/L,0,0
+Students,Music,Music theory/composition,Non-music,R/L,31,335,,,47.2,60.1,60.7,55.6,EHI,pref,R/L,1,0
+Students,Architecture,Architecture,Microbiology,R/L,69,67,,,56.3,66.9,60.3,43.8,EHI,pref,R/L,0,0
+Students,Architecture,Architecture,Accounting,R/L,69,54,,,56.3,73.8,60.3,43.7,EHI,pref,R/L,0,0
+Students,Architecture,Architecture,Industrial Design,R/L,69,44,,,56.3,61.7,60.3,51.2,EHI,pref,R/L,0,0
+Students,Architecture,Architecture,Landscape Architecture,R/L,69,32,,,56.3,52.7,60.3,62.6,EHI,pref,R/L,0,0
+Students,Architecture,Architecture,Music theory/composition,R/L,69,31,,,56.3,47.2,60.3,60.7,EHI,pref,R/L,0,0
+Students,Architecture,Architecture,Law,R/L,69,69,,,56.3,49.1,60.3,66.3,EHI,pref,R/L,0,0
+Students,Architecture,Architecture,Non-architecture,R/L,69,297,,,56.3,59.7,60.3,55.1,EHI,pref,R/L,1,0

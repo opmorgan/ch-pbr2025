@@ -1,0 +1,77 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Katz, A. N. (1980). Do Left-Handers Tend to Be More Creative? The Journal of Creative Behavior, 14(4), 271–271. https://doi.org/10.1002/j.2162-6057.1980.tb00262.x
+
+Katz reported: (a) " The two handedness groups did not differ on any of the measures of creativity." and (b) Pearson's rho for degree of right handedness and TTCT subscores.
+
+"Pearson product-moment correlations between the degree
+of handedness and creativity test scores also failed to find a
+relationship. The correlations with each test were as follows:
+Torrance Verbal: -.019 (Fluency)..."
+
+Direction of correlation is not reported explicitly. I assume that a positive correlation means that stronger right handedness corresponds to higher creativity scores because:
+
+1. Higher handedness scores are for stronger right handedness ("Scores could range from 18 (most strongly left-handed) to, 162 (most strongly right·handed).")
+
+2. In several other papers I have looked at, a positive score on the TTCT is a better score.
+
+```{r}
+study <- "katz_1980"
+task <- "RAT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+```
+
+### Pearson's ρ
+```{r}
+es_type <- "rho"
+```
+
+```{r}
+measure <- "Problems solved out of 30 in 40 minutes"
+n <- 100
+rho <- 0.010
+## Calculate confidence intervals for rho uing Fisher's z' transform:
+## https://shandou.medium.com/how-to-compute-confidence-interval-for-pearsons-r-a-brief-guide-951445b9cb2d
+## This function is defined in lib/util.R
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+### Cohen's D
+The author reported that "The two handedness groups did not differ on any of the measures of creativity." (No relevant stats reported).
+
+```{r}
+es_type <- "d"
+```
+
+```{r}
+n_right = 70
+n_left = 30
+```
+
+```{r}
+measure <- "Problems solved out of 30 in 40 minutes"
+esci <- tibble(lower = NA, upper = NA, effect = NA)
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "Only 'no significant effect'",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

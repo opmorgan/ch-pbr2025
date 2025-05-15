@@ -1,0 +1,115 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R, gt -->
+
+Falletta, B. A. (1986). The relationship between sinistrality and right cerebral hemisphere cognitive functions in a select sample of college students. Florida Atlantic University.
+
+Data are extracted from Table 7 (p. 73). 28 left and right handers (measured by self-reported "hand used most of the time") were scored on originality and elaboration on the Figural Torrance test (pictural construction). The authors report group means and SD, and that they found no significant effect of handedness. 
+
+Originality:
+The point estimate favors right handers slightly. [L: 4.5714 (2.284, SE=.432) vs. R: 4.750 (1.974, SE=.373) ]
+
+Elaboration:
+The point estimate favors left handers. [L: 7.1786 (3.278, SE = .619) vs. R: 6.2857 (2.980, SE = .563) ]
+
+
+```{r}
+study <- "falleta_1986"
+task <- "TTCT(F)"
+```
+
+```{r}
+handedness_measure <- "Self-ID"
+rl_sm <- "R/L"
+es_type <- "d"
+```
+
+```{r}
+## Load data
+input_filename <- "falleta_1986_ttct-f.csv"
+input_path <- here(extract_dir, "data", "input", input_filename)
+input <- read_csv(input_path)
+## Display data
+pretty_table(input, title = input_filename)
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+n_input <- data.frame(right = NA, left = NA)
+for (h in c("right", "left")) {
+  unique_n <- input %>% filter(handedness == h) %>% .[["n"]] %>% unique()
+  if (length(unique_n == 1)) {
+    n_input[[h]]  <- unique_n %>% first()
+  } else {
+    stop(str_c(study, ", ", task,
+      ": unexpected multiple values for n (right handers) in input file"))
+  }
+}
+
+n_right <- n_input$right
+n_left <- n_input$left
+str_c(n_right, ", ", n_left)
+```
+
+```{r}
+measure <- "Originality"
+m1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["mean"]]
+m2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["mean"]]
+sd1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["sd"]]
+sd2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["sd"]]
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_right, n2 = n_left, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_right, n2 = n_left,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Elaboration"
+m1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["mean"]]
+m2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["mean"]]
+sd1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["sd"]]
+sd2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["sd"]]
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_right, n2 = n_left, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_right, n2 = n_left,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

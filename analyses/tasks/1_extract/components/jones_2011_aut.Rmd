@@ -1,0 +1,77 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Jones, T., Caulfield, L., Wilkinson, D., & Weller, L. (2011). The Relationship Between Nonclinical Schizotypy and Handedness on Divergent and Convergent Creative Problem-Solving Tasks. Creativity Research Journal, 23(3), 222–228. https://doi.org/10.1080/10400419.2011.595964
+
+
+"...handedness was not a significant predictor of divergent thinking, beta = .38, t = 1.29, p > 0.05." ["divergent thinking" = AUT]
+
+"...handedness was not a significant predictor of convergent thinking, beta = 1.46, t = 0.95, p > 0.05." ["convergent thinking" = RAT]
+
+Means, ns, and sd for each handedness group (split by an irrelevant second grouping) are also reported. Because effect size  can be calculated from these values without covariates (in the regression analysis, schitzotypy), I will use the effect size calculated from group means instead.
+
+Only fluency was reported, for this reason: "Fluency alone was used in the current study since this has been shown to be informative of divergent thinking (Bately & Furnham, 2008; Kyriacou & Brugger, 2003)"
+
+Note that schizotypy is overrepresented among the left handers in this sample.
+
+### {.tabset}
+```{r}
+study <- "jones_2011"
+task <- "AUT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+es_type = "d"
+```
+
+```{r}
+measure <- "Fluency"
+## AUT ("divergent thinking")
+## Lefties
+m_left_low <- 12.80
+sd_left_low <- 12.97
+n_left_low <- 5
+m_left_high <- 22.63
+sd_left_high <- 8.34
+n_left_high <- 16
+
+m_left <- agg_mean_cochrane(n1 = n_left_low,   n2 = n_left_high,
+                            m1 = m_left_low,   m2 = m_left_high)
+sd_left <- agg_sd_cochrane(sd1 = sd_left_low, sd2 = sd_left_high,
+                            n1 = n_left_low,   n2 = n_left_high,
+                            m1 = m_left_low,   m2 = m_left_high)
+n_left <- n_left_low + n_left_high
+
+## Righties
+m_right_low <- 14.15
+sd_right_low <- 9.42
+n_right_low <- 27
+m_right_high <- 15.56
+sd_right_high <- 7.28
+n_right_high <- 16
+
+m_right <- agg_mean_cochrane(n1 = n_right_low,   n2 = n_right_high,
+                             m1 = m_right_low,   m2 = m_right_high)
+sd_right <- agg_sd_cochrane(sd1 = sd_right_low, sd2 = sd_right_high,
+                             n1 = n_right_low,   n2 = n_right_high,
+                             m1 = m_right_low,   m2 = m_right_high)
+n_right <- n_right_low + n_right_high
+
+d <- msd_to_d(m1 = m_right, sd1 = sd_right,
+                      m2 = m_left, sd2 = sd_left)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_right, n2 = n_left, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_right, n2 = n_left,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns (Aggregated)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

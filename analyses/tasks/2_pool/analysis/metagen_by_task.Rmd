@@ -1,0 +1,37 @@
+This pooling is mathematically innapropriate because it (1) combines rho estimates with Cohen's D estimates, and (2) partial rhos/d's with simple rhos/d's; and (3) collapses across different task measures.
+
+```{r}
+label_var = "All studies by task"
+```
+
+```{r, results = "markup", cache = T}
+## Find pooled effects
+sub <- es_individual
+task_vars <- sub[["task"]] %>% unique()
+es_type_var <- "all"
+partials_var <- "NA"
+measure_var <- "all"
+
+for (task_var in task_vars) {
+    sub_meta <- sub %>% filter(task == task_var)
+    for (model_type_var in c("fixed", "random")) {
+      m1 <- meta::metagen(data = sub_meta, studlab = study, TE = effect,
+                          seTE = se, sm = "SMD")
+      pool_row <- metagen_makerow(m1, model_type = model_type_var,
+                                   partials = partials_var, task = task_var,
+                                   measure = measure_var, es_type = es_type_var,
+                                   label = label_var)
+      pool_table <- pool_table %>% add_row(pool_row)
+    }
+}
+```
+```{r}
+## Print summary table
+disp_tbl <- pool_table %>% filter(label == label_var)
+disp_tbl %>% pool_table_gt(title = label_var, groupname_col = NA)
+```
+```{r, results = "markup"}
+## Print full metagen summaries to console
+print_metagen_summaries(disp_tbl)
+```
+

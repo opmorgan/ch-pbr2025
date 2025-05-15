@@ -1,0 +1,30 @@
+Hering, R., Catarci, T., & Steiner, T. (1995). Handedness in musicians. Functional Neurology, 10(1), 23–26.
+[[PDF](https://drive.google.com/file/d/13VjEUD_IzfOKGe1zjGz2-wexaxrfmuhi/view?usp=sharing)]
+
+This study reports the handedness of 382 professional orchestra players. Handedness was measured by asking participants whether they were "right, left or mixed handed."
+
+This study does not include a control group.
+
+I will report the R/(M+L) frequency as "R/L" For odds ratios, I have preferred SR/SL, because it is a more direct measure of handedness direction, with less noise that could wash out differences. But, for a single frequency with no control group, the right vs. nonright percentage might be easier to interpret and compare with other studies.
+
+I will report the (R+L)/M frequency as "S/M."
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "hering_1995"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = F, RR = F, freq = T)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

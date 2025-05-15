@@ -1,0 +1,60 @@
+```{r}
+label_var <- "All studies by measure, ES type"
+```
+```{r}
+pool_table_part <- init_pool_table()
+```
+```{r, results = "markup"}
+## Find pooled effects
+sub <- es_individual
+## Specify measures to include -- those which show up in multiple tasks
+## and may be comparable
+relevant_measures <- c("Fluency", "Originality", "Appropriateness", "Elaboration", "Flexibility")
+measure_vars <- intersect(relevant_measures, unique(sub$measure))
+partials_var <- "NA"
+task_var <- "all"
+
+for (measure_var in measure_vars) {
+    es_type_vars <- sub %>%
+      filter(measure == measure_var) %>%
+      .[["es_type"]] %>%
+      unique()
+    for(es_type_var in es_type_vars) {
+      sub_meta <- sub %>% filter(measure == measure_var & es_type == es_type_var)
+      m1 <- meta::metagen(data = sub_meta, studlab = study, TE = effect,
+                          seTE = se, sm = "SMD")
+
+      for (model_type_var in c("fixed", "random")) {
+        pool_row <- metagen_makerow(m1, model_type = model_type_var,
+                                     partials = partials_var, task = task_var,
+                                     measure = measure_var, es_type = es_type_var,
+                                     label = label_var)
+        pool_table_part <- pool_table_part %>% add_row(pool_row)
+      }
+    }
+}
+
+pool_table <- pool_table %>% add_row(pool_table_part)
+```
+
+#### Fixed
+```{r}
+## Print summary table
+disp_tbl <- pool_table %>%
+  filter(label == label_var, model_type == "fixed") %>%
+  select(-label)
+disp_tbl %>% pool_table_gt(title = label_var, groupname_col = c("measure"))
+```
+#### Random {.active}
+```{r}
+## Print summary table
+disp_tbl <- pool_table %>%
+  filter(label == label_var, model_type == "random") %>%
+  select(-label)
+disp_tbl %>% pool_table_gt(title = label_var, groupname_col = c("measure"))
+```
+
+```{r, results = "markup"}
+## Print full metagen summaries to console
+print_metagen_summaries(disp_tbl)
+```

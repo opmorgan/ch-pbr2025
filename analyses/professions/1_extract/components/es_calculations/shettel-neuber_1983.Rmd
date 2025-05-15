@@ -1,0 +1,34 @@
+Shettel-Neuber, J., & O’Reilly, J. (1983). Handedness and Career Choice: Another Look at Supposed Left/Right Differences. Perceptual and Motor Skills, 57(2), 391–397. https://doi.org/10.2466/pms.1983.57.2.391
+[[PDF](https://drive.google.com/file/d/1mULflqu9ckIt6kIX6sxFaLXAzHp9Zyoo/view?usp=sharing)]
+
+The authors report the percentage of faculty in art, architecture, law and psychology who are right, mixed, and left handed. Converting their percentages to frequencies,
+Architecture:
+22 right, 0 mixed, 1 left (23 total)
+Art:
+29 right, 1 mixed, 1 left (31 total)
+Law:
+20 right, 2 mixed, 4 left (26 total)
+Psychology:
+28 right, 0 mixed, 1 left (29 total)
+
+The present analysis compares Art/Architecture to Law/Psychology (each pairwise), using each possible comparison for R/L, S/M.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "shettel-neuber_1983"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

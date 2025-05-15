@@ -1,0 +1,4 @@
+pop,profession,creative_group,control_group,h,rl_sm,comparison_details,n_creative,n_left_creative,n_control,n_left_control,pref_success,include,exclude_rnr
+Military,Art/Music,Art Hobbies,Non-Art Hobbes,AHQ,S/M,SR/(M+SL),184,90,695,281,preference,1,1
+Military,Art/Music,Art Hobbies,Non-Art Hobbes,AHQ,R/L,SR/SL,100,6,439,25,preference,1,0
+Military,Art/Music,Art Hobbies,Non-Art Hobbies,AHQ,S/M,(SR+SL)/M,184,84,695,256,preference,1,0

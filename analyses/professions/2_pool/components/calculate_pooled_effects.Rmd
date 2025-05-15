@@ -1,0 +1,77 @@
+### Pool effect sizes from raw proportions, using glmer() {.tabset}
+
+With glmer, any number of variables can be modeled as random effects.
+
+The model type "random (all) includes study, estimate, handedness comparison, and population (Students/Faculty/Professionals) as random effects. This model is appropriate because effect estimates might vary along all of these dimensions.
+
+```{r}
+label_var = "from raw proportions, with all random effects, using glmer()"
+
+## Use cached table, if it exists
+pooled_filename <- str_c("pooled effects ", label_var, " ", rl_sm_label, ".csv")
+pooled_filepath <- here(pool_dir, "data", "proc", pooled_filename)
+if (file.exists(pooled_filepath)) {
+  pool_table <- readr::read_csv(pooled_filepath)
+} else {
+  sub <- pool_input
+  glm_sub <- glm_input
+
+  prof_vars <- sub[["profession"]] %>% unique()
+  model_type_vars <- c("random (all)")
+
+  ## Initialize table to store results
+  ## Requires {pool_dir}/lib/tables.R/init_pool_table()
+  pool_table <- init_pool_table()
+
+  for (model_type_var in model_type_vars) {
+    for (prof_var in prof_vars) {
+      glm_sub_prof <- glm_sub %>% filter(profession == prof_var)
+      meta_sub_prof <- sub %>% filter(profession == prof_var)
+      pool_row <- glmm_makerow(glm_sub_prof, meta_sub_prof, profession = prof_var,
+                   es_type = "OR", model_type = model_type_var, label = "glmer")
+      pool_table <- pool_table %>% add_row(pool_row)
+    }
+  }
+  ## Save to file
+  readr::write_csv(pool_table, pooled_filepath)
+}
+
+## Print summary table
+pool_table %>% pool_table_gt(title = label_var, groupname_col = "profession")
+
+# ## Add results to full table (This will hold individual stueis and effect estimates)
+# pool_table_full <- pool_table_full %>% add_row(pool_table)
+```
+
+```{r}
+# ## Print summary table
+# pool_table_full %>% pool_table_gt(title = label_var, groupname_col = "profession")
+```
+
+```{r}
+# ## Save to file
+# pool_full_filename <- str_c("pooled_effects_", rl_sm_label, ".csv")
+# readr::write_csv(pool_table_full, here(pool_dir, "data", "output", pool_full_filename))
+```
+
+### Final table {.active}
+```{r}
+##TODO: add re-expression of odds ratios as rate ratios
+label_var = "Final table"
+# pool_table_full <- readr::read_csv(here(pool_dir, "data", "output", pool_full_filename))
+# pool_final <- pool_table_full %>% filter(model_type == "random (all)")
+ee_final <- pool_input
+
+forest_table <- bind_rows(ee_final, pool_table) %>% arrange(profession, N, effect) %>%
+    mutate(pL_creative = str_c(n_left_creative, "/", n_creative, "\n(", round(PL_creative, 2), "%)"),
+           pL_control = str_c(n_left_control, "/", n_control, "\n(", round(PL_control, 2), "%)")) %>%
+    select(profession, N, N_stu, study, rl_sm, group1, group2, pL_creative, pL_control, lower, effect, upper, p, I2, comparison, model_type, label, es_type, se)
+
+forest_table %>% pool_table_gt(title = label_var, groupname_col = "profession")
+
+## Save to file
+ft_filename <- str_c("forest_table_", rl_sm_label, ".csv")
+readr::write_csv(forest_table, here(pool_dir, "data", "output", ft_filename))
+```
+
+### Blank (collapse)

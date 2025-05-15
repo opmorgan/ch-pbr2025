@@ -1,0 +1,5 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Students,Architecture,Architecture (freshmen),HS seniors,R/L,60,87,7,14,4i_3pt,pref,(SR+MR)/(SL+ML),1,0
+Students,Music,Music (freshmen),HS seniors,R/L,88,87,13,14,4i_3pt,pref,(SR+MR)/(SL+ML),1,0
+Students,Architecture,Architecture (freshmen),HS seniors,S/M,60,87,45,69,4i_3pt,pref,(SR+SL)/M,1,0
+Students,Music,Music (freshmen),HS seniors,S/M,88,87,65,69,4i_3pt,pref,(SR+SL)/M,1,0

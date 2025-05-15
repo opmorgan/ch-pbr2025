@@ -1,0 +1,33 @@
+Schachter, S. C., & Ransil, B. J. (1996). Handedness Distributions in Nine Professional Groups. Perceptual and Motor Skills, 82(1), 51–63. https://doi.org/10.2466/pms.1996.82.1.51
+[[PDF](https://drive.google.com/file/d/1ttMj8S-f0RvEhNo_fT1IzTWibT0XhLwC/view?usp=sharing)]
+
+The authors mailed handedness questionnaires that asked EHI questions, and a 3-item question (right, left or ambidextrous).
+We can extract (1) mean handedness score for each profession (a R/L comparison), and/or (2) Odds ratios comparing architects to other professions. The odds ratio will be more comparable with other studies.
+The authors partition people into Right/Ambidextrous/Left in a few ways:
+Table 1: Mean EHI laterality score
+Table 2: Frequency for each "global handedness response" (self-reported right, mixed, or left)
+Table 3: Frequency and mean EHI score, and "Laterality index" for each global handedness response.
+Table 4: EHI cut at 33 (Good R/L comparison).
+Table 5: Relative frequencies of EHI laterality scores closest to 50 (right), 30 (mixed), and 10 (left).
+
+The present analysis uses the data from table two, because it enables the calculation of exact odds ratios for both R/L (leaving out mixed handers) and S/M (Strong right and left vs. mixed handers.) The data in table 5 would enable this too, but this partitions the three groups in an unusual way that leaves very few mixed handers.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "schacter_1996"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

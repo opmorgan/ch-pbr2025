@@ -1,0 +1,49 @@
+#### Option 1: Odds ratio
+Find Odds ratio, CI (Odds of being a righty, if you are in the creative group / odds if you are in the non-creative group)
+An odds ratio lower than 1 is a lefty advantage; higher than 1 is a righty advantage.
+For example, if the odds ratio is two, the odds of being a righty if you are in the creative group are twice the odds of being a righty if you are in the control group. (Maybe, 16:1 in the creative group, and 8:1 in the control group.)
+Here, the ratio of lefties is 1:16 in the creative group, and 1:8 in the control group.
+https://www.statology.org/confidence-interval-for-odds-ratio/
+
+
+#### Option 2: Relative Risk/risk ratio/rate ratio
+Risk ratio: ratio of the probability of being a righty if you are in the creative group / probability of being a righty if you are in the non-creative group.
+A risk ratio of lower than 1 is a lefty advantage; higher than 1 is a right advantage.
+
+ For example, if the risk ratio is two, the percentage of righties in the creative group is twice the percentage of righties in the control groups (Maybe, 96/100 in the creative group, and 48/100 in the control group).
+ (Here, the percentage of lefties is 4/100 in the creative group, and 52/100
+ in the control group -- much more than twice.)
+
+The relative risk ratio tells us something different depending on whether
+we treat lefties or righties as the "Event" group. For this reason, it might
+make more sense to use an odds ratio.
+
+We could also find the relative risk of being a lefty if you are in the
+creative vs. non-creative group. This will give the ratio of the % lefties
+in each group, with a positive number representing a lefty advantage.
+The package epitools can calculate a risk ratio with several different methods for finding confidence intervals.
+https://jarrettmeyer.com/2019/07/23/odds-ratio-in-r
+
+#### Option 3: Risk difference
+Risk difference: The difference between the probability of being a lefty if you are in the creative group and the probability of being a lefty if you are in the control group.
+
+A positive number will represent a greater number of righties in the creative group. For example, with a risk difference of 2%, there might be 12% lefties in the creative group, and 14% lefties in the control group.
+(This way, a lefty advantage will be visualized to the left in space in a forest plot, and numbers will be mental-numberline consistent).
+
+To me, this is the most intuitive of candidate effect size measures.
+But, the difference from 10% to 12% is different from that from 20% to 22% --
+Relative risk capture this difference, where risk difference doesn't.
+This will be a mathematical problem for pooling, as well, if there are
+different numbers of samples from distrubutions with higher/lower overall
+incidence of left handedness.
+Balancing this concern, I think that relative risk is the best effect size
+to use for this metan-analysis.
+
+<!-- We will see which studies give enough information to report risk difference/relative risk. If just Chi square is reported, what effect size(s) can I calculate? -->
+
+Any of these measures can be pooled, if we can find the exact number of
+lefties/righties in each group.
+
+More libraries to look at for relative proportion/CI estimation:
+PropCIs: https://cran.r-project.org/web/packages/PropCIs/
+

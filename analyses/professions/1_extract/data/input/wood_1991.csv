@@ -1,0 +1,5 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Professionals,Architecture,Architects,NA,R/L,257,NA,27,NA,Writing hand,success,SR/(M+SL),1,0
+Students,Architecture,Architecture students (M),General students (M),R/L,78,221,9,28,0-split,pref,SR/SL,1,0
+Students,Architecture,Architecture students (W),General students (W),R/L,27,149,1,22,Writing hand,pref,SR/SL,1,0
+Students,Architecture,Architecture students (W),General students (W),S/M,27,149,2,2,Writing hand,pref,(SR+SL)/M,1,0

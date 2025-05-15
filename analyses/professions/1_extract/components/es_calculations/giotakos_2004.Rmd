@@ -1,0 +1,83 @@
+Giotakos, O. (2004). Handedness and Hobby Preference. Perceptual and Motor Skills, 98(3), 869–872. https://doi.org/10.2466/pms.98.3.869-872 [[PDF](https://drive.google.com/file/d/10cnetxAew8qvOYP8WkHjBFpI20JjLSuN/view?usp=sharing)]
+
+The sample is 879 young men conscripted to the army. 58% strong righties, 3% strong left, 39% mixed. The author reports handedness frequency for those who prefer each of three hobbies: "Reading books, collecting, going to the cinema/theater"; "Art: playing music, drawing, handicraft." "Sports." Here, the frequency of lefties/mixedies preferring "Arts" is compared to the frequency preferring the other two hobbies combined. For R/L, "strong right" is compared to "strong left." For S/M, "strong right" + "strong left" is compared to "mixed."
+
+Handedness measure: AHQ 12 action questionnaire, "strong right" and "strong left" were maximum and minumum scores; everyone else was "mixed."
+
+```{r, include = F}
+# ## Calculating frequencies for each comparison
+# ## Results will be entered into the input .csv file
+# total_n = 879
+# ## Arts hobby
+# right1 = 94
+# mixed1 = 84
+# left1 = 6
+#
+# n1 = right1+mixed1+left1
+# n1 # 184
+#
+# ## Other hobbies
+# right2 = 340+74 # 414
+# mixed2 = 59+197 # 256
+# left2 = 10+15 # 25
+#
+# n_control = right2+mixed2+left2
+# n_control # 695
+#
+#
+# ## R/L (Strong right vs. Mixed + Strong left)
+# n_right_creative = right1
+# n_left_creative = mixed1 + left1
+# n_right_creative # 94
+# n_left_creative # 90
+# n_right_control = right2
+# n_left_control = mixed2 + left2
+# n_right_control # 414
+# n_left_control # 281
+#
+#
+# ## S/M (Strong right vs. Mixed + Strong Left)
+# n_right_creative = right1+left1
+# n_left_creative = mixed1
+# n_right_creative # 100
+# n_left_creative # 84
+# n_right_control = right2+left2
+# n_left_control = mixed2
+# n_right_control # 439
+# n_left_control # 256
+#
+#
+# ## R/L (Strong right vs. Strong Left)
+# n_creative = right1 + left1
+# n_right_creative = right1
+# n_left_creative = left1
+# n_creative # 100
+# n_right_creative # 94
+# n_left_creative # 6
+# n_control = right2 + left2
+# n_right_control = right2
+# n_left_control = left2
+# n_control #439
+# n_right_control # 414
+# n_left_control # 25
+```
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "giotakos_2004"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

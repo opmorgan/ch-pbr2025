@@ -1,0 +1,13 @@
+pop,profession,creative_group,control_group,h,rl_sm,comparison_details,n_creative,n_left_creative,n_control,n_left_control,pref_success,include,exclude_rnr
+Professionals,Art,Writers,Noncreatives,AHQ,R/L,SR/SL,20,0,78,0,mix,0,0
+Professionals,Art,Painters,Noncreatives,AHQ,R/L,SR/SL,22,2,78,0,mix,0,0
+Professionals,Music,Musicians,Noncreatives,AHQ,R/L,SR/SL,28,3,78,0,mix,1,0
+Professionals,Art,"Writers, Painters",Noncreatives,AHQ,R/L,SR/SL,42,2,78,0,mix,1,0
+Professionals,Art,Writers,Noncreatives,AHQ,S/M,(SR+SL)/M,25,5,80,2,mix,0,0
+Professionals,Art,Painters,Noncreatives,AHQ,S/M,(SR+SL)/M,25,3,80,2,mix,0,0
+Professionals,Music,Musicians,Noncreatives,AHQ,S/M,(SR+SL)/M,30,2,80,2,mix,1,0
+Professionals,Art,"Writers, Painters",Noncreatives,AHQ,S/M,(SR+SL)/M,50,8,80,2,mix,1,0
+Professionals,Art,Writers,Noncreatives,AHQ,S/M,SR/(M+SL),25,5,80,2,mix,0,1
+Professionals,Art,Painters,Noncreatives,AHQ,S/M,SR/(M+SL),25,5,80,2,mix,0,1
+Professionals,Music,Musicians,Noncreatives,AHQ,S/M,SR/(M+SL),30,5,80,2,mix,1,1
+Professionals,Art,"Writers, Painters",Noncreatives,AHQ,S/M,SR/(M+SL),50,10,80,2,mix,1,1

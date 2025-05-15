@@ -1,0 +1,101 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Felton, A. (2017). Interhemispheric Interaction and Creativity. [PhD Dissertation]
+
+Group means and SDs are reported for strong and mixed handers, defined by a median split on the absolute value of EHI handedness (70 in each group, based on df = 140 for two-sample t-test).
+
+```{r}
+study <- "felton_2017"
+task <- "AUT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "d"
+```
+
+```{r}
+measure <- "Fluency"
+
+m_strong <- 8.22
+sd_strong <- 3.78
+n_strong <- 71
+
+m_mixed <- 7.80
+sd_mixed <- 2.54
+n_mixed <- 71
+
+d <- msd_to_d(m1 = m_strong, sd1 = sd_strong,
+              m2 = m_mixed, sd2 = sd_mixed)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_strong, n2 = n_mixed, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_strong, n2 = n_mixed,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+```{r}
+measure <- "Originality"
+
+m_strong <- 72.92
+sd_strong <- 8.96
+n_strong <- 71
+
+m_mixed <- 72.68
+sd_mixed <- 8.99
+n_mixed <- 71
+
+d <- msd_to_d(m1 = m_strong, sd1 = sd_strong,
+              m2 = m_mixed, sd2 = sd_mixed)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_strong, n2 = n_mixed, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_strong, n2 = n_mixed,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+```{r}
+measure <- "Originality: top two"
+
+m_strong <- 2.98
+sd_strong <- 0.46
+n_strong <- 71
+
+m_mixed <- 2.92
+sd_mixed <- 0.40
+n_mixed <- 71
+
+d <- msd_to_d(m1 = m_strong, sd1 = sd_strong,
+              m2 = m_mixed, sd2 = sd_mixed)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_strong, n2 = n_mixed, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_strong, n2 = n_mixed,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

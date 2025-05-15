@@ -1,0 +1,13 @@
+pop,profession,creative_group,control_group,h,rl_sm,comparison_details,n_creative,n_left_creative,n_control,n_left_control,pref_success,include,exclude_rnr
+Students,Art/Architecture,"Design, Arch., Art",Sciences,Drawing hand,R/L,R/L,147,18,92,4,preference,0,0
+Students,Art/Architecture,"Design, Arch., Art",Behavioral Sciences,Drawing hand,R/L,R/L,147,18,90,8,preference,0,0
+Students,Art/Architecture,"Design, Arch., Art",Business Admin.,Drawing hand,R/L,R/L,147,18,241,23,preference,0,0
+Students,Art/Architecture,"Design, Arch., Art",Engineering,Drawing hand,R/L,R/L,147,18,75,8,preference,0,0
+Students,Art/Architecture,"Design, Arch., Art",Nursing,Drawing hand,R/L,R/L,147,18,71,3,preference,0,0
+Students,Art/Architecture,"Design, Arch., Art","Non-art, music",Drawing hand,R/L,R/L,147,18,569,46,preference,1,0
+Students,Music,Music,Sciences,Drawing hand,R/L,R/L,47,7,92,4,preference,0,0
+Students,Music,Music,Behavioral Sciences,Drawing hand,R/L,R/L,47,7,90,8,preference,0,0
+Students,Music,Music,Business Admin.,Drawing hand,R/L,R/L,47,7,241,23,preference,0,0
+Students,Music,Music,Engineering,Drawing hand,R/L,R/L,47,7,75,8,preference,0,0
+Students,Music,Music,Nursing,Drawing hand,R/L,R/L,47,7,71,3,preference,0,0
+Students,Music,Music,"Non-art, music",Drawing hand,R/L,R/L,47,7,569,46,preference,1,0

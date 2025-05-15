@@ -1,0 +1,689 @@
+---
+title: "Tasks: forest plots (Creativity and Handedness)"
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    highlight: zenburn
+    editor_options:
+      chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F,
+                      fig.align = "center", fig.width = 9,
+                      fig.height = 6, results = "asis")
+options(knitr.kable.NA = "")
+```
+
+```{r lib, include = F}
+## Test that this file exists in the expected place
+## relative to project root
+here::i_am("analyses/tasks/3_forest/forest.Rmd",
+           uuid = "3c5078d6-4469-4fd9-8b7a-2f95c6b9b319")
+
+## Load Packages
+library(here)
+library(tidyverse)
+library(RColorBrewer) ## For categorical color palette
+library(forestplot)
+library(meta)
+
+## Source common (project-level) functions
+source(here("analyses", "lib", "util.R")) # format_p(), numformat()
+source(here("analyses", "lib", "tables.R")) # pretty_table()
+
+## Declare base directory for project component
+extract_dir <- here("analyses", "tasks", "1_extract")
+pool_dir <- here("analyses", "tasks", "2_pool")
+forest_dir <- here("analyses", "tasks", "3_forest")
+```
+
+```{r config}
+DEBUG <- FALSE
+
+plot_blue <- c("#337aB7")
+plot_colors <- c("#4477AA",
+                 "#EE6677",
+                 "#CCBB44",
+                 "#66CCEE",
+                 "#AA3377",
+                 "#228833",
+                 "#BBBBBB")
+plot_color = plot_blue
+```
+
+```{r load_data_for_tables}
+combine_data <- 0
+forest_filename <- "forest.csv"
+
+if (combine_data == 1) {
+## Load pooled effects data
+pool_table_rl <- readr::read_csv(here(pool_dir, "data", "output", "RAT-recode_pooled_effects_rl.csv")) |>
+  mutate(rl_sm = "R/L")
+
+pool_table_sm <- readr::read_csv(here(pool_dir, "data", "output", "RAT-recode_pooled_effects_sm.csv")) |>
+  mutate(rl_sm = "S/M")
+
+pool_table <- bind_rows(pool_table_rl, pool_table_sm)
+
+
+pool_table <- pool_table |>
+  filter(label == "All studies by task, measure, ES type") |>
+  filter(model_type == "fixed") |>
+  arrange(task, measure, es_type, effect) |>
+  mutate(study = "Summary",
+         meta = 1) |>
+  select(rl_sm, task, measure, es_type, study, lower, effect, upper, p, I2, N, N_stu, n, n1, n2, model_type, label, metagen_obj, meta, everything()) |>
+  arrange(rl_sm, task, measure, es_type, meta, effect)
+
+## Load individual studies data
+ex_table <- readr::read_csv(here(extract_dir, "data", "output", "extracted_effects.csv"))
+
+## Recode RAT measures
+ex_table <- ex_table |>
+  mutate(measure = recode(measure,
+                          "Total problems solved in 5 minutes" = "Problems solved",
+                          "Total problems solved in 15 minutes" = "Problems solved",
+                          "Problems solved out of 20, untimed" = "Problems solved",
+                          "Problems solved out of 30 in 40 minutes" = "Problems solved",
+                          "Problems solved out of 21" = "Problems solved"
+                          )
+) |>
+  ## Create variable indicating not meta-analytic summary stats
+  mutate(meta = 0)
+
+## Concatenate extracted, pooled data
+meta_table <- ex_table |> full_join(pool_table)
+
+meta_table |>
+  select(rl_sm, task, measure, es_type, study, N, n, n1, n2, lower, effect, upper, I2, everything()) |>
+  arrange(rl_sm, task, measure, es_type, meta, effect)
+
+## Save to file
+readr::write_csv(meta_table, here(forest_dir, "data", "output", forest_filename))
+} else if (combine_data == 0) {
+  ## Load forest data from file
+meta_table <- read_csv(here(forest_dir, "data", "output", forest_filename))
+}
+
+```
+
+```{r load_data_for_meta_forest}
+load_metagen_table <- function(mt_filename) {
+metagen_table <- readRDS(here(pool_dir, "data", "output", mt_filename))
+## Recode Effect size types
+metagen_table <- metagen_table |>
+  mutate(
+    es_type = es_type |>
+      recode("d" = "Cohen's D",
+             "d_p" = "Cohen's D (partial)",
+             "rho" = "ρ",
+             "rho_p" = "ρ (partial)",
+             "beta" = "β",
+               )
+  )
+    return(metagen_table)
+}
+
+metagen_table_rl <- load_metagen_table("RAT-recode_pooled_effects_rl.rds")
+metagen_table_sm <- load_metagen_table("RAT-recode_pooled_effects_sm.rds")
+```
+
+```{r lib_make_metaforestplot}
+make_metaforestplot <- function(metagen_table, comparison_var = "R/L",
+                                task_var, measure_var, es_var,
+                                xlim_var = "symmetric") {
+sub <- metagen_table |>  filter(task == task_var, measure == measure_var,
+                         es_type == es_var, model_type == "random")
+
+if (comparison_var == "R/L") {
+  n_label_left = "n(L)"
+  n_label_right = "n(R)"
+} else if (comparison_var == "S/M") {
+  n_label_left = "n(M)"
+  n_label_right = "n(S)"
+}
+
+m1 <- sub$metagen_obj
+
+n_studies <- m1$metagen_obj$k.study
+
+if (n_studies > 2) {
+  plot_RE_model = T
+
+} else if (n_studies <= 2) {
+  plot_RE_model = F
+}
+
+## Relabel studies with long names
+for (j in 1:length(m1$metagen_obj$studlab)) {
+  if (m1$metagen_obj$studlab[[j]] == "Hattie & Fitzgerald (1983)") {
+    m1$metagen_obj$studlab[[j]] <- "Hattie & F. (1983)"
+  }
+  if (m1$metagen_obj$studlab[[j]] == "Stewart & Clayson (1980)") {
+    m1$metagen_obj$studlab[[j]] <- "Stewart & C. (1980)"
+  }
+}
+
+# meta::forest.meta() manual:
+# https://rdrr.io/cran/meta/man/forest.meta.html
+fp <- meta::forest(m1$metagen_obj,
+                   random = plot_RE_model,
+            text.fixed = "Summary (Fixed)",
+            text.random = "Summary (Mixed)",
+            # label.left = "Left hander advantage",
+            # label.right = "Right hander advantage",
+            leftcols = c("studlab", "effect", "ci", "n", "n1", "n2"),
+            leftlabs = c("Study", "ES", "95% CI", "n", n_label_right, n_label_left),
+            rightcols = FALSE,
+            rightlabs = c("Weight \n(fixed)", "Weight \n (random)"),
+            # xlab = es_var,
+            xlim = xlim_var,
+            smlab = str_c(task_var, ": ", measure_var,
+                          " (", comparison_var, ") \n", es_var),
+            header.line = "below",
+            print.tau2 = FALSE,
+            title = "test",
+            lty.common = 0, ## Remove line for Summary estimates.
+            lty.random = 0,
+            col.inside = "black",
+            plotwidth = "8 cm",
+            sortvar = TE
+)
+
+return(fp)
+}
+```
+
+# {.tabset .tabset-pills}
+
+These plots were generated and viewed in RStudio, and manually saved with identical width to: tasks/3_forest/figures/inkscape/pngs. Then, they were combined using inkscape to create the multipanel plots shown in the paper.
+
+## AUT {.tabset}
+
+### R/L
+
+```{r AUT_RL}
+#### TASK
+task_var <- "AUT"
+
+#### COMPARISON
+comparison_var <- "R/L"
+if (comparison_var == "R/L") {
+  mt <- metagen_table_rl
+} else if (comparison_var == "S/M") {
+  mt <- metagen_table_sm
+}
+
+## Check which measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var,
+               model_type == "random") |>
+    pull(measure)
+}
+
+
+#### MEASURE
+measure_var <- "Fluency"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                          xlim = c(-.6, .6))
+
+es_var <- "ρ (partial)"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                           xlim = c(-.6, .6))
+
+es_var <- "β"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                          xlim = c(-2.2, 2.2))
+
+#### MEASURE
+measure_var <- "Originality"
+
+
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                          xlim = c(-.6, .6))
+
+es_var <- "ρ (partial)"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+
+es_var <- "β"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                          xlim = c(-2.2, 2.2))
+
+#### MEASURE
+measure_var <- "Originality/Fluency"
+
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "ρ (partial)"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+
+
+es_var <- "β"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                          xlim = c(-2.2, 2.2))
+```
+
+### S/M
+```{r AUT_SM}
+#### TASK
+task_var <- "AUT"
+
+#### COMPARISON
+comparison_var <- "S/M"
+if (comparison_var == "R/L") {
+  mt <- metagen_table_rl
+} else if (comparison_var == "S/M") {
+  mt <- metagen_table_sm
+}
+
+## Check which measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var,
+               model_type == "random") |>
+    pull(measure)
+}
+
+
+#### MEASURE
+measure_var <- "Fluency"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                          xlim = c(-.6, .6))
+
+
+#### MEASURE
+measure_var <- "Originality"
+
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var, es_var,
+                          xlim = c(-.6, .6))
+```
+
+## RAT {.tabset}
+
+### R/L
+```{r RAT_RL}
+#### TASK
+task_var <- "RAT"
+
+#### COMPARISON
+comparison_var <- "R/L"
+if (comparison_var == "R/L") {
+  mt <- metagen_table_rl
+} else if (comparison_var == "S/M") {
+  mt <- metagen_table_sm
+}
+
+## Check which measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var,
+               model_type == "random") |>
+    pull(measure) |> unique()
+}
+
+
+#### MEASURE
+measure_var <- "Problems solved"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+```
+
+### S/M
+```{r RAT_SM}
+#### TASK
+task_var <- "RAT"
+
+#### COMPARISON
+comparison_var <- "S/M"
+if (comparison_var == "R/L") {
+  mt <- metagen_table_rl
+} else if (comparison_var == "S/M") {
+  mt <- metagen_table_sm
+}
+
+## Check which measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var,
+               model_type == "random") |>
+    pull(measure) |> unique()
+}
+
+
+#### MEASURE
+measure_var <- "Problems solved"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+```
+
+## TTCT-F {.tabset}
+### R/L
+```{r TTCTF_RL}
+#### TASK
+task_var <- "TTCT(F)"
+
+#### COMPARISON
+comparison_var <- "R/L"
+if (comparison_var == "R/L") {
+  mt <- metagen_table_rl
+} else if (comparison_var == "S/M") {
+  mt <- metagen_table_sm
+}
+
+## Check which measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var,
+               model_type == "random") |>
+    pull(measure) |> unique()
+}
+
+
+#### MEASURE
+measure_var <- "Fluency"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+
+#### MEASURE
+measure_var <- "Originality"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "Cohen's D (partial)"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+
+#### MEASURE
+measure_var <- "Elaboration"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "Cohen's D (partial)"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+
+#### MEASURE
+measure_var <- "Flexibility"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+```
+
+<!-- #### S/M -->
+```{r}
+## No data for S/M (TTCT-F)
+```
+
+## TTCT-V {.tabset}
+### R/L
+```{r}
+#### TASK
+task_var <- "TTCT(V)"
+
+#### COMPARISON
+comparison_var <- "R/L"
+if (comparison_var == "R/L") {
+  mt <- metagen_table_rl
+} else if (comparison_var == "S/M") {
+  mt <- metagen_table_sm
+}
+
+## Check which measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var,
+               model_type == "random") |>
+    pull(measure) |> unique()
+}
+
+
+#### MEASURE
+measure_var <- "Fluency"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+
+#### MEASURE
+measure_var <- "Originality"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+
+#### MEASURE
+measure_var <- "Flexibility"
+
+## Check which effect size measures to extract
+if (DEBUG == T) {
+  mt |> filter(task == task_var, measure == measure_var,
+               model_type == "random") |>
+    pull(es_type)
+}
+
+
+es_var <- "Cohen's D"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-2, 2)
+                           )
+
+es_var <- "ρ"
+fp <- make_metaforestplot(mt, comparison_var,
+                          task_var, measure_var,es_var,
+                          xlim = c(-.6, .6)
+                           )
+```
+
+<!-- #### S/M -->
+```{r}
+## No data for S/M (TTCT-V)
+```
+
+
+

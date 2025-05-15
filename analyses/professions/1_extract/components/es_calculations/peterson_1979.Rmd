@@ -1,0 +1,24 @@
+Peterson, J. M. (1979). Left-Handedness: Differences between Student Artists and Scientists. Perceptual and Motor Skills, 48(3), 961–962. https://doi.org/10.2466/pms.1979.48.3.961.
+[[PDF](https://drive.google.com/file/d/1of_tWAnFBuXma43i84Pn4lB9ZpE8FtFf/view?usp=sharing)]
+
+The authors report the number and percentage of left handers by major among a group of 1045 undergrads in a psychology course. The majors "Music" and "Design, Arch., Art" can be compared to the majors: Sciences, Behavioral sciences, Business admin, Engineering, and Nursing.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "peterson_1979"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

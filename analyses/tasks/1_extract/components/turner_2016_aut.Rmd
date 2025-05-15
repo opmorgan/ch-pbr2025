@@ -1,0 +1,539 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Turner, C. E. (2016). Do saccadic bilateral eye movement enhance performance on creative tasks? [PhD Thesis]
+
+No inferential statistics were reported beyond "no p < 0.05". Table 4 on p. 36 shows means and SDs by condition for each AUT subscore.
+
+### {.tabset}
+
+```{r}
+study <- "turner_2016"
+task <- "AUT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "d"
+```
+
+#### Means and SDs from Table 4
+
+```{r}
+## Data from Table 4, p. 36
+# Fluency
+# 3.21 (0.97) (Central, Mixed)
+# 3.84 (1.13) (Central, Strong)
+# 3.32 (1.26) (Moving, Mixed)
+# 3.25 (1.07) (Moving, Strong)
+# Appropriateness
+# 2.87 (0.90) (Central, Mixed)
+# 3.28 (1.05) (Central, Strong)
+# 2.86 (1.08) (Moving, Mixed)
+# 3.00 (0.92) (Moving, Strong)
+# Flexibility (Appropriate
+# Responses Only)
+# 2.76 (1.28) (Central, Mixed)
+# 3.08 (1.50) (Central, Strong)
+# 2.64 (1.03) (Moving, Mixed)
+# 2.65 (0.79) (Moving, Strong)
+# Detail/Elaboration (Appropriate
+# Responses Only)
+# 11.92 (6.23) (Central, Mixed)
+# 16.35 (13.01) (Central, Strong)
+# 19.64 (18.71) (Moving, Mixed)
+# 21.25 (23.20) (Moving, Strong)
+# Originality
+# 7.86 (2.48) (Central, Mixed)
+# 8.63 (2.93) (Central, Strong)
+# 7.83 (2.90) (Moving, Mixed)
+# 7.96 (2.33) (Moving, Strong)
+```
+
+#### Fluency
+
+```{r}
+measure <- "Fluency, central condition"
+n1 <- 24
+n2 <- 24
+## stats for "central circles"
+m_mixed_central <- 3.21
+sd_mixed_central <- 0.97
+m_strong_central <- 3.84
+sd_strong_central <- 1.13
+
+d_central <- msd_to_d(m1 = m_strong_central, sd1 = sd_strong_central,
+                      m2 = m_mixed_central, sd2 = sd_mixed_central)
+
+esci <- psych::cohen.d.ci(d = d_central, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Fluency, moving condition"
+n1 <- 24
+n2 <- 24
+## stats for "moving circles"
+m_mixed_moving <- 3.32
+sd_mixed_moving <- 1.26
+m_strong_moving <- 3.25
+sd_strong_moving <- 1.07
+
+
+d_moving <- msd_to_d(m1 = m_strong_moving, sd1 = sd_strong_moving,
+                     m2 = m_mixed_moving, sd2 = sd_mixed_moving)
+
+esci <- psych::cohen.d.ci(d = d_moving, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Fluency"
+
+## Specify n for each condition, each group
+n1 <- 24
+n2 <- 24
+
+sd_mixed_overall <- agg_sd_cochrane(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd_cochrane(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+## Specify n for each condition
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns (Aggregated)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+#### Appropriateness
+```{r}
+# Appropriateness
+# 2.87 (0.90) (Central, Mixed)
+# 3.28 (1.05) (Central, Strong)
+# 2.86 (1.08) (Moving, Mixed)
+# 3.00 (0.92) (Moving, Strong)
+
+measure <- "Appropriateness"
+n1 <- 24
+n2 <- 24
+## stats for "central circles"
+m_mixed_central <- 2.87
+sd_mixed_central <- 0.90
+m_strong_central <- 3.28
+sd_strong_central <- 1.05
+
+d_central <- msd_to_d(m1 = m_strong_central, sd1 = sd_strong_central,
+                      m2 = m_mixed_central, sd2 = sd_mixed_central)
+
+esci <- psych::cohen.d.ci(d = d_central, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Appropriateness, moving condition"
+n1 <- 24
+n2 <- 24
+## stats for "moving circles"
+m_mixed_moving <- 2.86
+sd_mixed_moving <- 1.08
+m_strong_moving <- 3.00
+sd_strong_moving <- 0.92
+
+
+d_moving <- msd_to_d(m1 = m_strong_moving, sd1 = sd_strong_moving,
+                     m2 = m_mixed_moving, sd2 = sd_mixed_moving)
+
+esci <- psych::cohen.d.ci(d = d_moving, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Appropriateness"
+
+## Specify n for each condition, each group
+n1 <- 24
+n2 <- 24
+
+sd_mixed_overall <- agg_sd_cochrane(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd_cochrane(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+## Specify n for each condition
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns (Aggregated)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+#### Flexibility
+```{r}
+# Flexibility (Appropriate
+# Responses Only)
+# 2.76 (1.28) (Central, Mixed)
+# 3.08 (1.50) (Central, Strong)
+# 2.64 (1.03) (Moving, Mixed)
+# 2.65 (0.79) (Moving, Strong)
+measure <- "Flexibility, central condition"
+n1 <- 24
+n2 <- 24
+## stats for "central circles"
+m_mixed_central <- 2.76
+sd_mixed_central <- 1.28
+m_strong_central <- 3.08
+sd_strong_central <- 1.50
+
+d_central <- msd_to_d(m1 = m_strong_central, sd1 = sd_strong_central,
+                      m2 = m_mixed_central, sd2 = sd_mixed_central)
+
+esci <- psych::cohen.d.ci(d = d_central, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Flexibility, moving condition"
+n1 <- 24
+n2 <- 24
+## stats for "moving circles"
+m_mixed_moving <- 2.64
+sd_mixed_moving <- 1.03
+m_strong_moving <- 2.65
+sd_strong_moving <- 0.79
+
+
+d_moving <- msd_to_d(m1 = m_strong_moving, sd1 = sd_strong_moving,
+                     m2 = m_mixed_moving, sd2 = sd_mixed_moving)
+
+esci <- psych::cohen.d.ci(d = d_moving, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Flexibility"
+
+## Specify n for each condition, each group
+n1 <- 24
+n2 <- 24
+
+sd_mixed_overall <- agg_sd_cochrane(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd_cochrane(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+## Specify n for each condition
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns (Aggregated)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+#### Detail/Elaboration
+```{r}
+# Detail/Elaboration (Appropriate
+# Responses Only)
+# 11.92 (6.23) (Central, Mixed)
+# 16.35 (13.01) (Central, Strong)
+# 19.64 (18.71) (Moving, Mixed)
+# 21.25 (23.20) (Moving, Strong)
+measure <- "Elaboration, central condition"
+n1 <- 24
+n2 <- 24
+## stats for "central circles"
+m_mixed_central <- 11.92
+sd_mixed_central <- 6.23
+m_strong_central <- 16.35
+sd_strong_central <- 13.01
+
+d_central <- msd_to_d(m1 = m_strong_central, sd1 = sd_strong_central,
+                      m2 = m_mixed_central, sd2 = sd_mixed_central)
+
+esci <- psych::cohen.d.ci(d = d_central, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Elaboration, moving condition"
+n1 <- 24
+n2 <- 24
+## stats for "moving circles"
+m_mixed_moving <- 19.64
+sd_mixed_moving <- 18.71
+m_strong_moving <- 21.25
+sd_strong_moving <- 23.20
+
+
+d_moving <- msd_to_d(m1 = m_strong_moving, sd1 = sd_strong_moving,
+                     m2 = m_mixed_moving, sd2 = sd_mixed_moving)
+
+esci <- psych::cohen.d.ci(d = d_moving, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Elaboration"
+
+## Specify n for each condition, each group
+n1 <- 24
+n2 <- 24
+
+sd_mixed_overall <- agg_sd_cochrane(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd_cochrane(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+## Specify n for each condition
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns (Aggregated)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+#### Originality
+```{r}
+# Originality
+# 7.86 (2.48) (Central, Mixed)
+# 8.63 (2.93) (Central, Strong)
+# 7.83 (2.90) (Moving, Mixed)
+# 7.96 (2.33) (Moving, Strong)
+measure <- "Originality, central condition"
+n1 <- 24
+n2 <- 24
+## stats for "central circles"
+m_mixed_central <- 7.86
+sd_mixed_central <- 2.48
+m_strong_central <- 8.63
+sd_strong_central <- 2.93
+
+d_central <- msd_to_d(m1 = m_strong_central, sd1 = sd_strong_central,
+                      m2 = m_mixed_central, sd2 = sd_mixed_central)
+
+esci <- psych::cohen.d.ci(d = d_central, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Originality, moving condition"
+n1 <- 24
+n2 <- 24
+## stats for "moving circles"
+m_mixed_moving <- 7.83
+sd_mixed_moving <- 2.90
+m_strong_moving <- 7.96
+sd_strong_moving <- 2.33
+
+
+d_moving <- msd_to_d(m1 = m_strong_moving, sd1 = sd_strong_moving,
+                     m2 = m_mixed_moving, sd2 = sd_mixed_moving)
+
+esci <- psych::cohen.d.ci(d = d_moving, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From m, SD, n1, n2", include = 0
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Originality"
+
+## Specify n for each condition, each group
+n1 <- 24
+n2 <- 24
+
+sd_mixed_overall <- agg_sd_cochrane(sd1 = sd_mixed_central, sd2 = sd_mixed_moving,
+                            m1 = m_mixed_central, m2 = m_mixed_moving,
+                            n1 = n1, n2 = n2)
+sd_strong_overall <- agg_sd_cochrane(sd1 = sd_strong_central, sd2 = sd_strong_moving,
+                            m1 = m_strong_central, m2 = m_strong_moving,
+                            n1 = n1, n2 = n2)
+
+m_mixed_overall <- mean(m_mixed_central, m_mixed_moving)
+m_strong_overall <- mean(m_strong_central, m_strong_moving)
+
+d_overall <- msd_to_d(m1 = m_strong_overall, sd1 = sd_strong_overall,
+                     m2 = m_mixed_overall, sd2 = sd_mixed_overall)
+
+esci <- psych::cohen.d.ci(d = d_overall, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+## Specify n for each condition
+n1 <- 48; n2 <- 48
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n1, n2 = n2,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns (Aggregated)",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

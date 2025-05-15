@@ -1,0 +1,46 @@
+Goodman, J. (2014). The wages of sinistrality: Handedness, brain structure, and human capital accumulation. Journal of Economic Perspectives, 28(4), 193–212. https://doi.org/10.1257/jep.28.4.193
+[[PDF](https://drive.google.com/file/d/1ea4UDNGawXjiQ9kgjSKCGbdeE0FUaw4g/view?usp=sharing)]
+
+Count are extracted for artists, architects, and musicians from the two US datasets with census occupation codes: the NLSY79 and the NLSY97. (These two datasets comprise the "US dataset" for which Goodman reported lower originality scores for left handers). This extraction is implemented in the script: analyses/professions/0_replicate_goodman/main.Rmd.
+
+Here, odds ratios are extracted for participants in the US dataset with professions in art, architecture, and music.
+
+### Load data from input file (NLSY79)
+```{r}
+## Load and display input data
+study <- "nlsy79"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```
+
+### Load data from input file (NLSY97)
+```{r}
+## Load and display input data
+study <- "nlsy97"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

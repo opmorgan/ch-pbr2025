@@ -1,0 +1,146 @@
+---
+title: "Professions: pool extracted effect sizes (Creativity and Handedness)"
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    highlight: zenburn
+    editor_options:
+      chunk_output_type: console
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F,
+                      fig.align = "center", fig.width = 9,
+                      fig.height = 6, results = "asis")
+options(knitr.kable.NA = "")
+```
+
+```{r lib, include = F}
+## Test that this file exists in the expected place
+## relative to project root
+here::i_am("analyses/professions/2_pool/pool.Rmd",
+           uuid = "3c5078d6-4869-4fd9-8b7a-2f95c6b9b316")
+
+## Load Packages
+library(here)
+library(tidyverse)
+library(gt) ## To print tables
+library(RColorBrewer) ## For categorical color palette
+library(lme4) # use glmer for odds ratio pooling
+library(emmeans) # to find CI for glmm models
+requireNamespace("meta")
+
+## Source common (project-level) functions
+source(here("analyses", "lib", "util.R")) # format_p(), numformat()
+source(here("analyses", "lib", "tables.R")) # pretty_table()
+source(here("analyses", "lib", "conversions.R")) # ci_to_se(), se_to_inv_var()
+
+## Declare base directory for project component
+extract_dir <- here("analyses", "professions", "1_extract")
+pool_dir <- here("analyses", "professions", "2_pool")
+
+## Source analysis-specific functions
+source(here(pool_dir, "lib", "1_proc_ee.R"))
+source(here(pool_dir, "lib", "2_make_glm_df.R"))
+source(here(pool_dir, "lib", "pool_functions.R"))
+source(here(pool_dir, "lib", "tables.R"))
+```
+
+```{r}
+## MANUAL CACHING
+## These files are manually cached:
+## data/proc/glm_data.csv
+## data/proc/pooled effects...
+## To clear the cache, delete all files from data/proc/
+```
+
+```{r, echo = F}
+## Load and process extracted effect size data
+extracted_effects <- readr::read_csv(here(extract_dir, "data", "output",
+                                          "extracted_effects.csv"))
+## Requires: {pool_dir/lib/1_proc_ee.R
+ee_proc <- proc_ee(extracted_effects)
+
+## Create (or load cached) glm table, with one row for each observation)
+## Requires: {pool_dir/lib/2_make_glm_df.R
+glm_data <- make_glm_df(ee_proc)
+```
+
+<!-- # Procedure -->
+<!-- ```{r child = here(pool_dir, "components", "procedure.Rmd")} -->
+<!-- ``` -->
+
+# Calculate pooled effect sizes for each profession {.tabset}
+
+Pool estimates from studies with odds ratios for left or mixed handers between a creative and control group. Pool estimated odds ratios for each profession.
+
+An odds ratio greater than 1 indicates lefty/mixedy advantage.
+
+## R/L + S/M {.tabset .tabset-pills}
+An odds ratio greater than one is a lefty/mixedy advantage.
+```{r, echo = F}
+rl_sm_label <- "rl_sm"
+# pool_table_full <- init_pool_table()
+pool_input <- ee_proc %>% filter(rl_sm == "R/L" | rl_sm == "S/M")
+glm_input <- glm_data %>% filter(rl_sm == "R/L" | rl_sm == "S/M")
+```
+```{r child = here(pool_dir, "components", "calculate_pooled_effects.Rmd")}
+```
+```{r}
+## Save pooled data to file
+# pooled_filename <- str_c("pooled_effects_", rl_sm_label, ".csv")
+# readr::write_csv(pool_table_full, here(pool_dir, "data", "output", pooled_filename))
+#
+```
+
+## R/L {.tabset .tabset-pills .active}
+Left/right comparisons only — an odds ratio greater than one is a lefty advantage.
+```{r, echo = F}
+rl_sm_var <- "R/L"
+rl_sm_label <- "rl"
+# pool_table_full <- init_pool_table()
+pool_input <- ee_proc %>% filter(rl_sm == rl_sm_var)
+glm_input <- glm_data %>% filter(rl_sm == rl_sm_var)
+```
+```{r child = here(pool_dir, "components", "calculate_pooled_effects.Rmd")}
+```
+```{r}
+## Save pooled data to file <-
+# pooled_filename <- str_c("pooled_effects_", rl_sm_label, ".csv")
+# readr::write_csv(pool_table_full, here(pool_dir, "data", "output", pooled_filename))
+
+# pooled_filename_rds <- str_c("pooled_effects_", rl_sm_label, ".rds")
+# saveRDS(pool_table_full, here(pool_dir, "data", "output", pooled_filename_rds))
+```
+
+## S/M {.tabset .tabset-pills}
+Strong/mixed comparisons only — an odds ratio greater than one is a mixedy advantage.
+```{r, echo = F}
+rl_sm_var <- "S/M"
+rl_sm_label <- "sm"
+# pool_table_full <- init_pool_table()
+pool_input <- ee_proc %>% filter(rl_sm == rl_sm_var)
+glm_input <- glm_data %>% filter(rl_sm == rl_sm_var)
+```
+```{r child = here(pool_dir, "components", "calculate_pooled_effects.Rmd")}
+```
+```{r}
+## Save pooled data to file
+# pool_full_filename <- str_c("pooled_effects_", rl_sm_label, ".csv")
+# readr::write_csv(pool_table_full, here(pool_dir, "data", "output", pool_full_filename))
+
+# pooled_filename_rds <- str_c("pooled_effects_", rl_sm_label, ".rds")
+# saveRDS(pool_table_full, here(pool_dir, "data", "output", pooled_filename_rds))
+```
+<br>
+<br>

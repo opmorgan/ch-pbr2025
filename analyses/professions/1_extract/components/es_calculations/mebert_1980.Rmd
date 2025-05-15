@@ -1,0 +1,44 @@
+Mebert, C. J., & Michel, G. F. (1980). Handedness in Artists. In Neuropsychology of Left-Handedness (pp. 273–279). Academic Press, Inc. https://doi.org/10.1016/B978-0-12-343150-9.50017-2. [[PDF](https://drive.google.com/file/d/1poHOQ7XQUdsmdl5e9cywDyHMOJnThYN6/view?usp=sharing)]
+
+This study compared the frequncy of left-handedness in fine arts majors vs. other majors.
+The authors report the following frequencies in body text:
+"The Oldfield scores were used to differentiate between
+left-handed (-51 through -100) , mixed-handed (-50 through +50) , and right-handed
+(+50 through +100) subjects. The numbers of artists and nonartists falling into these
+three categories differed significantly (Chi^2 = 15.61; df = 2; p < .001). The
+actual numbers are: (a) 21 artists and 7 nonartists were left-handed; (b) 28
+artists and 15 nonartists were mixed-handed; and (c) 54 artists and 79
+nonartists were right-handed. These scores were then transformed in order
+to eliminate negative values and were used in an analysis of variance. This
+analysis revealed a significant difference between the scores of the artists
+and nonartists (F = 18.08; df = 1, 200; p < .001), no significant sex-
+related differences (F = 2.36; df = 1, 200, n.s.) and no interaction
+(F = 0.31, df = 1, 200, n.s.)."
+
+That is,
+Art majors: 21 left, 28 mixed, 54 right
+Other majors: 7 left, 15 mixed, 19 right
+
+Handedness was measured with Annett's (1967) handedness questionnaire, binned intro three groups using Oldfield's (1971) formula.
+
+In the present analysis, the L/R comparison compares those classified as "left-handed" to those classified as "right handed." The S/M comparison compares those classified as left or right handed to those classified as mixed handed.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "mebert_1980"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

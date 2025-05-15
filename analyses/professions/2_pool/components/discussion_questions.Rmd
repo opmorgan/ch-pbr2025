@@ -1,0 +1,15 @@
+* Should freshman vs. graduating architecture students be included?
+* Should studies with groups like "Architecture/Art" be included in botht Architecture and Art pools? (There are five of these).
+
+### What method should be used for pooling odds ratio estimates? {.active}
+Cochrane recommends the Peto method for pooling odds ratios:
+https://training.cochrane.org/handbook/current/chapter-10#section-10-4
+But, the Peto method may do poorly when contrl and treatment groups are uneven, and when the effect is small. (See Harrer 2021).
+
+Following Bakbergenuly 2020, the Paule-Mandel procedure should be used to estimate heterogeneity (tau^2) because our number of studies is relatively small.
+
+However, the inverse variance method (using precompiled effect estimates) may be more robust to uneven sample sizes -- for example, Cosenza 1993's huge control group.
+
+Xu & Li (2020) propose using GLMMs or bayesian methods to estimate pooled effect sizes. Chang & Hoaglin (2017) advocate strongly for using GLMM instead of traditional approaches. This approach could also enable us to address the fact that some studies/groups have multiple estimates -- research group can be added as a random effect.
+
+### Blank (collapse) {.active}

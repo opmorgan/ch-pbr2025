@@ -1,0 +1,124 @@
+---
+title: "Professions: funnel plots (Creativity and Handedness)"
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    highlight: zenburn
+    editor_options:
+      chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F,
+                      fig.align = "center", fig.width = 9,
+                      fig.height = 6, results = "asis")
+options(knitr.kable.NA = "")
+```
+
+```{r lib, include = F}
+## Test that this file exists in the expected place
+## relative to project root
+here::i_am("analyses/professions/3_funnel/funnel.Rmd",
+           uuid = "3c5078d6-4469-4fd9-8b7a-2335c6b9b319")
+
+## Load Packages
+library(knitr) ## include_graphics
+library(here)
+library(tidyverse)
+library(RColorBrewer) ## For categorical color palette
+requireNamespace("meta")
+library(patchwork)
+
+## Source common (project-level) functions
+source(here("analyses", "lib", "util.R")) # format_p(), numformat()
+source(here("analyses", "lib", "tables.R")) # pretty_table()
+source(here("analyses", "lib", "conversions.R")) # ci_to_se()
+
+## Declare base directory for project component
+extract_dir <- here("analyses", "professions", "1_extract")
+pool_dir <- here("analyses", "professions", "2_pool")
+funnel_dir <- here("analyses", "professions", "3_funnel")
+
+## Source analysis-specific functions
+source(here(funnel_dir, "lib", "find_pooled_se.R"))
+source(here(funnel_dir, "lib", "plot_functions.R"))
+```
+
+```{r}
+## Can try manually with ggplot:
+
+## Load individual and pooled estimates
+forest_table <- readr::read_csv(here(pool_dir, "data", "output",
+                                     "forest_table_rl_sm.csv"))
+
+
+source(here(funnel_dir, "lib", "plot_functions.R"))
+p1 <- prof_funnel_plot("Architecture", forest_table)
+p2 <- prof_funnel_plot("Art", forest_table)
+p3 <- prof_funnel_plot("Music", forest_table)
+
+```
+```{r}
+prof_funnel_grid <- p1 + p2 + p3 +
+  plot_layout(guides = "collect")
+
+## Save figures
+figure_name <- str_c("prof_funnel_grid.png")
+figure_path <- here(funnel_dir, "figures", figure_name)
+ggsave(figure_path, plot = prof_funnel_grid, width=9, height=4, dpi=300)
+
+figure_name <- str_c("Architecture.png")
+figure_path <- here(funnel_dir, "figures", figure_name)
+ggsave(figure_path, plot = p1, width=9, height=4, dpi=300)
+
+figure_name <- str_c("Art.png")
+figure_path <- here(funnel_dir, "figures", figure_name)
+ggsave(figure_path, plot = p2, width=9, height=4, dpi=300)
+
+figure_name <- str_c("Music.png")
+figure_path <- here(funnel_dir, "figures", figure_name)
+ggsave(figure_path, plot = p3, width=9, height=4, dpi=300)
+```
+```{r}
+include_graphics(here(funnel_dir, "figures", "prof_funnel_grid.png"))
+```
+```{r}
+include_graphics(here(funnel_dir, "figures", "Architecture.png"))
+```
+```{r}
+include_graphics(here(funnel_dir, "figures", "Art.png"))
+```
+```{r}
+include_graphics(here(funnel_dir, "figures", "Music.png"))
+```
+
+```{r, include = F}
+## Use funnel.meta
+
+## Load extracted effects data
+ee_proc <- readr::read_csv(here(pool_dir, "data", "proc", "ee_proc.csv"))
+
+prof_var <- "Architecture"
+sub_meta <- ee_proc %>% filter(profession == "Architecture")
+sub_meta
+
+sub_meta %>% filter(study == "shettel-neuber_1983") %>% select(study, profession, lower, effect, upper, se)
+
+## Make metabin model
+m1 <- meta::metabin(data = sub_meta,
+              studlab = study,
+              n.e = n_creative,
+              event.e = n_left_creative,
+              n.c = n_control,
+              event.c = n_left_control,
+              method = "glmm",
+              sm = "OR",
+              # method.tau = "PM", #  needs to be "ML" for GLMM approach
+              MH.exact = T)
+
+meta::funnel.meta(m1, contour.levels = .95, col.contour = "gray90", title = "test", backtransf = T, studlab = T)
+
+## funnel.meta is not very configurable. And, hard to save the image...
+```

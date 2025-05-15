@@ -1,0 +1,274 @@
+---
+title: "Replicating and extending analysis from Goodman (2014)"
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    highlight: zenburn
+    editor_options:
+      chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F,
+                      fig.align = "center", fig.width = 9,
+                      fig.height = 6, results = "asis")
+options(knitr.kable.NA = "")
+```
+
+```{r lib, include = F}
+## Test that this file exists in the expected place
+## relative to project root
+here::i_am("analyses/professions/0_replicate_goodman/main.Rmd",
+           uuid = "41aed3d4-9a8b-438b-be1d-811c655f9323")
+
+## Load packages
+library(here)
+library(knitr)
+library(haven)
+library(tidyverse)
+library(ggplot2)
+library(gghalves)
+library(broom)
+requireNamespace("weights") ## For weighted pearson correlation
+requireNamespace("psych")
+
+
+## Declare base directory for this project component
+replicate_dir <- here("analyses", "professions", "0_replicate_goodman")
+
+## Source project function
+source(here("analyses", "lib", "tables.R"))
+source(here("analyses", "lib", "es_functions.R"))
+source(here("analyses", "professions", "lib", "es_functions.R"))
+
+## Source analysis-specific functions
+source(here(replicate_dir, "lib", "1_load", "load_replication_data.R"))
+source(here(replicate_dir, "lib", "2_replicate", "replicate_goodman.R"))
+source(here(replicate_dir, "lib", "3_extract", "code_handedness.R"))
+source(here(replicate_dir, "lib", "3_extract", "extract_counts.R"))
+source(here(replicate_dir, "lib", "3_extract", "write_counts.R"))
+source(here(replicate_dir, "lib", "4_visualize", "gg_style.R"))
+source(here(replicate_dir, "lib", "4_visualize", "replication_plot.R"))
+source(here(replicate_dir, "lib", "4_visualize", "quantile_plots.R"))
+source(here(replicate_dir, "lib", "4_visualize", "occ_plots.R"))
+```
+
+```{r, include = F}
+input_dir <- here(replicate_dir, "data")
+replication_data_dir <- here(input_dir, "replication_data",
+                             "Data-appendix---Joshua-Goodman")
+output_dir <- here(replicate_dir, "data", "output")
+```
+# {.tabset}
+
+## Load data
+
+Load the data.
+```{r, cache = T}
+## Load handedness.dta (replicate_dir/lib/1_load/load_replication_data.R)
+handedness_dta <- load_replication_data()
+## Subset to US sample ('79 and '97 datasets)
+## The US dataset is coded as "3", but I will construct it from the component sample
+## so that I can filter them later.
+## '79 dataset: coded as 4. '97 dataset: coded as 5
+hand <- handedness_dta %>% filter(sample %in% c(4, 5)) ## 11,715 observations (as expected)
+```
+
+Inspect the data.
+```{r}
+## Inspect handedness.dta
+hand |> group_by(lefty, sample) |> count() # handedness coded in binary as 0 (right) or 1 (left)
+hand |> group_by(leftness, sample) |> count() # handedness coded in binary as 0 (right) or 1 (left)
+```
+
+Right- versus left-hander groups can be constructed by taking those with handedness scores of 0 (right handed) versus those with handedness scores of 1 (left handed). This will approximate a comparison of strong right versus strong left handers (imperfectly, because the NLSY79 dataset only includes a binary 'right or left' measure). Goodman's original analysis compared right handers (coded as 0) to non-right handers (including those with any handedness score between 0 and 1); this analysis is reproduced in the codebook as well.
+
+The occupation codes in the variable "occ" refect the 3-digit 1980 census codes,and the 4-digit 2002 census codes, for the NLSY79 and NLSY97 datasets. Derivatives of ONET ratings are coded in handedness_dta, for each participant's profession. (e.g., in the variables "occ_creative", "occ_physical"). "occ_creative" contains a z-scored measure of the degree to which a profession requires originality and inductive reasoning.
+
+Trim to columns we will use.
+```{r}
+## Trim to columns we will use
+hand <- hand %>% select(sample, leftness, lefty, occ, occ_creative)
+```
+
+## Extract prof. counts
+
+Extract counts of artists, architects, and musicians (for meta-analysis).
+
+### Define profession categories for census codes
+```{r}
+## Define profession categories (census codes)
+codes <- readr::read_csv(here(input_dir, "census_groups.csv"))
+```
+
+### Extract counts for each occupation
+```{r}
+#### Extract frequencies of left and right handers by profession group
+
+## (1) Code handedness
+hand_proc <- code_handedness(hand)
+
+## (2) Extract creative, control counts
+counts_proc <- extract_counts(hand_proc, codes)
+
+## Write extracted counts to file
+## (Formatted to use as input in ch/analyses/professions/extract.Rmd)
+write_counts(counts_proc)
+```
+
+## Analyze
+
+### Replicate analysis of difference in job-required creativity by handedness
+
+In each sample (NLSY79, NLSY97, and the combined US sample), calculate the effect of handedness on profession creativity ratings. (Originality, Inductive Reasoning).
+
+Goodman reported that, in the US sample, left handers' had professions with lower mean Originality and Inductive Reasoning.
+
+Goodman's cleaned dataset includes a variable "occ_creative" which contains a score combining ONET's ratings for originality and inductive reasoning for each profession. This score was z-scored across all subjects in each sample. This is the score that Goodman reported was lower in left handers, in the US sample.
+
+This codebook replicates Goodman's finding, and adds a comparison of strong versus mixed handedness. Handedness was assessed differently in each of the two component samples, so each sample is run separately as well as combined. Additionally, the correlation between profession creativity and proportion of left handers is tested.
+
+In all analyses, a positive effect size indicates a right- or strong-hander advantage. P-values are from a t-tests assuming equal variance.
+
+```{r, echo = F}
+es <- replicate_goodman(hand)
+```
+```{r, echo = F}
+es %>% arrange(rl_sm, sample) %>%
+  pretty_table(title = "Replicating Goodman's Originality/Inductive reasoning analysis", groupname_col = "rl_sm") %>%
+  data_color(
+    columns = c(lower, effect, upper),
+    colors = scales::col_bin(
+        bins = 3,
+        na.color = "#f7f7f7",
+      palette = c(
+        "#f1b6da", "#f7f7f7", "#b8e186"),
+      domain = c(-2.7, 2.7))
+  )
+```
+
+### Test correlation between profession creativity and incidence of left handedness
+
+```{r}
+#### Use lm
+## percent_left ~ occ_creative (for each profession); weights = professions
+
+#### Prepare dataframe
+sub <- hand_proc %>% filter(rl_sm == "SR/SL")
+cor_data <- find_occ_counts(sub)
+```
+
+```{r}
+#### Test weighted Pearson correlation
+## Column "correlation" is the estimated pearson's correlation coefficient
+cor_pearson <- weights::wtd.cor(cor_data$percent_left, cor_data$occ_creative, weight = cor_data$n_total)
+cor_pearson %>% as_tibble() |> pretty_table()
+```
+
+## Visualize {.tabset}
+
+### Prepare data
+
+The NLSY79 dataset is coded in tables as "4," the NLSY97 as "5." The union of the two datasets is called the "US sample."
+
+```{r, echo = T}
+## Define handedness comparison
+rl_sm_var <- "SR/SL"
+rl_sm_label <- "srsl"
+```
+
+```{r, echo = T}
+## Define subset of data to visualize (handedness comparison)
+sub <- hand_proc %>%
+  select(sample, rl_sm, handedness, occ, occ_creative) %>%
+  filter(rl_sm == "SR/SL") %>%
+  ## Make handedness a factor
+  mutate(handedness = as.factor(handedness)) %>%
+  ## Add variables for creativity score quartile, decile
+  mutate(quartile = as.factor(ntile(desc(occ_creative), 4))) %>%
+  mutate(decile = as.factor(ntile(desc(occ_creative), 10))) %>%
+  ### Make variable with creativity ranking
+  mutate(rank = dense_rank(desc(occ_creative)))
+```
+
+Filter out participants with no occupation or no occupation creativity score.
+```{r}
+sub <- sub %>%
+  ## Remove NAs (unemployed or no occupation score)
+  filter(!is.na(occ_creative))
+```
+
+### Replication: mean job creativity for left versus left handers {.tabset}
+
+The half box plot shows the median and quartile bounds. The dot and line show means and 95% confidence intervals.
+
+```{r, echo = F}
+title <- "US Sample"
+g <- make_replication_plot(sub, title = title)
+```
+```{r, echo = F}
+fig_path <- here(replicate_dir, "figures",
+                 str_c("replication_boxplot_", title, "_", rl_sm_label, ".png"))
+ggsave(fig_path, g, "png", height = 4, width = 3)
+include_graphics(fig_path)
+```
+
+### Proportion of lefties in each quartile
+
+Error bars show 95% confidence intervals (Wilson's score method). The gray strip shows the percentage of lefties in the whole sample, with 95% confidence bounds.
+
+```{r, echo = F}
+n_quantiles <- 4
+y_limits <- c(5, 15)
+```
+
+```{r, echo = F}
+counts <- find_quantile_counts(sub,
+                               n_quantiles = n_quantiles)
+total_count <- find_total_count(counts)
+
+title = "Proportion of lefties by quartile"
+g <- graph_quantile_counts(counts, title = title, y_limits = y_limits)
+```
+
+```{r, echo = F}
+fig_path <- here(replicate_dir, "figures",
+                 str_c("quantile_props_", n_quantiles, "_",
+                       title, "_", rl_sm_label, ".png"))
+ggsave(fig_path, g, "png", height = 3, width = 3)
+include_graphics(fig_path)
+```
+
+<br>
+```{r, echo = F}
+print_quantile_counts(counts)
+```
+
+
+### Quartile stats
+
+```{r}
+## Compare proportion of lefties in top quartile to proportion in lower quartiles
+top <- counts |> filter(quantile == 1)
+bottom <- counts |> filter(quantile != 1)
+
+x1 <- top$n_left
+n1 <- top$n_right
+x2 <- sum(bottom$n_left)
+n2 <- sum(bottom$n_right)
+
+M <- as.table(rbind(c(x1, n1), c(x2, n2)))
+dimnames(M) <- list(group = c("top", "bottom"),
+                    handedness = c("left","right"))
+
+Xsq <- chisq.test(M)
+tidy(Xsq) |> pretty_table()
+```
+
+
+
+
+
+

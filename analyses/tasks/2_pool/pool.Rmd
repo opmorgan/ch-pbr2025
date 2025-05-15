@@ -1,0 +1,148 @@
+---
+title: "Tasks: pool extracted effect sizes (Creativity and Handedness)"
+author: ""
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    highlight: zenburn
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F,
+                      fig.align = "center", fig.width = 9,
+                      fig.height = 6, results = "asis")
+options(knitr.kable.NA = "")
+
+#rmarkdown::render(here("analyses", "tasks", "2_pool", "pool.Rmd"), "html_document")
+```
+
+```{r lib, include = F}
+## Test that this file exists in the expected place
+## relative to project root
+here::i_am("analyses/tasks/2_pool/pool.Rmd",
+           uuid = "f740a502-3803-4728-bf08-cf6b0b47c00d")
+
+## Load Packages
+library(here)
+library(tidyverse)
+library(gt) ## To print tables
+library(RColorBrewer) ## For categorical color palette
+
+## Source common (project-level) functions
+source(here("analyses", "lib", "util.R")) # format_p(), numformat()
+source(here("analyses", "lib", "tables.R")) # pretty_table()
+source(here("analyses", "lib", "conversions.R")) # ci_to_se(), se_to_inv_var()
+source(here("analyses", "lib", "ci_functions.R")) ## e.g., r2_to_rho
+
+## Declare base directory for project component
+extract_dir <- here("analyses", "tasks", "1_extract")
+pool_dir <- here("analyses", "tasks", "2_pool")
+
+## Source analysis-specific functions
+source(here(pool_dir, "lib", "pool_functions.R"))
+source(here(pool_dir, "lib", "util.R"))
+source(here(pool_dir, "lib", "init_pool_table.R"))
+```
+
+```{r, include = F}
+## Load extracted effect sizes
+es_individual_full <- read_csv(here(extract_dir, "data", "output",
+                        "extracted_effects.csv")) %>%
+            select(-notes) %>%
+          ## remove NAs (studies that report "null" with no stats)
+            filter(!is.na(effect))
+```
+```{r, include = T}
+## Calculate SE, "inverse variance" for each study
+## (needed to directly calculate ES summaries)
+es_individual_full <- es_individual_full %>%
+  mutate(se = ci_to_se(n = n, lower = lower, upper = upper, alpha = 0.05),
+         inv_var = se_to_inv_var(se)
+         )
+```
+
+# Calculate pooled effect sizes {.tabset}
+
+```{r, echo = F}
+##TODO: Convert "r" values to standardized estimates, using
+## Fisher's transform (Then re-calculate CI from z, n)
+
+##TODO: Show forest plots
+```
+
+```{r}
+## Recode RAT problems in es_individual_full
+es_individual_full <- es_individual_full %>%
+  mutate(measure = recode(measure,
+                          "Total problems solved in 5 minutes" = "Problems solved",
+                          "Total problems solved in 15 minutes" = "Problems solved",
+                          "Problems solved out of 20, untimed" = "Problems solved",
+                          "Problems solved out of 30 in 40 minutes" = "Problems solved",
+                          "Problems solved out of 21" = "Problems solved"
+                          )
+)
+```
+
+## S/M + R/L {.tabset .tabset-pills}
+Combining strong/mixed and left/right comparisons — strong/right advantage is coded as a positive effect.
+```{r, echo = F}
+## Initialize summary table
+pool_table <- init_pool_table()
+
+## Make sub-table
+es_individual <- es_individual_full ## Do not filter by R/L, S/M
+## Make table collapsing partial and simple effects
+es_individual_collapse_partial <- es_individual %>%
+  mutate(es_type = recode(es_type, rho_p = "rho", d_p = "d"))
+```
+```{r child = here(pool_dir, "components", "calculate_pooled_effects.Rmd")}
+```
+```{r}
+## Save to file
+pooled_filename <- "RAT-recode_pooled_effects_rlsm.csv"
+readr::write_csv(pool_table, here(pool_dir, "data", "output", pooled_filename))
+pooled_filename_rds <- "RAT-recode_pooled_effects_rlsm.rds"
+saveRDS(pool_table, here(pool_dir, "data", "output", pooled_filename_rds))
+```
+
+## R/L {.tabset .tabset-pills}
+Left/right comparisons only — right-hander advantage is coded as a positive effect.
+```{r, echo = F}
+pool_table <- init_pool_table()
+es_individual <- es_individual_full %>% filter(rl_sm == "R/L")
+es_individual_collapse_partial <- es_individual %>%
+  mutate(es_type = recode(es_type, rho_p = "rho", d_p = "d"))
+```
+```{r child = here(pool_dir, "components", "calculate_pooled_effects.Rmd")}
+```
+```{r}
+## Save to file
+pooled_filename <- "RAT-recode_pooled_effects_rl.csv"
+readr::write_csv(pool_table, here(pool_dir, "data", "output", pooled_filename))
+pooled_filename_rds <- "RAT-recode_pooled_effects_rl.rds"
+saveRDS(pool_table, here(pool_dir, "data", "output", pooled_filename_rds))
+```
+
+## S/M {.tabset .tabset-pills}
+Strong/mixed comparisons only — strong-hander advantage is coded as a postive effect.
+```{r, echo = F}
+pool_table <- init_pool_table()
+es_individual <- es_individual_full %>% filter(rl_sm == "S/M")
+es_individual_collapse_partial <- es_individual %>%
+  mutate(es_type = recode(es_type, rho_p = "rho", d_p = "d"))
+```
+```{r child = here(pool_dir, "components", "calculate_pooled_effects.Rmd")}
+```
+```{r}
+## Save to file
+pooled_filename <- "RAT-recode_pooled_effects_sm.csv"
+readr::write_csv(pool_table, here(pool_dir, "data", "output", pooled_filename))
+pooled_filename_rds <- "RAT-recode_pooled_effects_sm.rds"
+saveRDS(pool_table, here(pool_dir, "data", "output", pooled_filename_rds))
+```
+
+<br>
+<br>

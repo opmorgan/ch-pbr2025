@@ -1,0 +1,39 @@
+
+Peterson, J. M., & Lansky, L. M. (1977). Left-handedness among architects: Partial replication and some new data. Perceptual and Motor Skills, 45(3_suppl), 1216–1218. https://doi.org/10.2466/pms.1977.45.3f.1216 [[PDF](https://drive.google.com/file/d/1QHAHB-TRxIzo7PUoKVkg_4STRSEtazvj/view?usp=sharing)]
+
+This sample includes all subjects from Peterson & Lansky 1974, and compares the graduation rate for right vs. left-handed students. For meta-analysis, I will consider graduating students as the creative group, and entering students as the control group.
+
+Total n = 484 (students who enrolled between 1970 and 1976)
+In contrast to Peterson & Lansky 1974, handedness is calculated on a 5-point scale for subejcts prior to 1976, and on a 10-point (Oldfield's) scale starting in 1976. Using the Oldfield scale, a 0 split was used to bin "left handers." It isn't reported how people were binned for the 5-point scale.
+
+"Of 405 right-handed students, 25 1 (62 % ) graduated; of 79 left-handed students, 58
+(73.4% ) graduated. The Likelihood Ratio of 3.75 was significant at the .05
+level."
+
+In the entering class:
+405 right handers, 79 left handers.
+n = 484
+
+In the graduating class:
+251 right handers, 58 left handers.
+n = 309
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "peterson_1977"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

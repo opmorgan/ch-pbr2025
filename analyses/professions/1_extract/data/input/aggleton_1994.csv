@@ -1,0 +1,9 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Professionals,Music,Instrumental musicians,British adults,R/L,623,1538,76,129,EHI,success,0-split,1,0
+Professionals,Music,Composers,British adults,R/L,331,1538,36,129,EHI,success,0-split,1,0
+Professionals,Music,Choir Members,British adults,R/L,584,1538,73,129,EHI,success,0-split,1,0
+Professionals,Music,Musicians,British adults,R/L,1538,1538,185,129,EHI,success,0-split,0,0
+Professionals,Music,Instrumental musicians,British adults,S/M,623,1538,102,169,EHI,success,(SR+SL)/(ML+MR),1,0
+Professionals,Music,Composers,British adults,S/M,331,1538,52,169,EHI,success,(SR+SL)/(ML+MR),1,0
+Professionals,Music,Choir Members,British adults,S/M,584,1538,92,169,EHI,success,(SR+SL)/(ML+MR),1,0
+Professionals,Music,Musicians,British adults,S/M,1538,1538,246,169,EHI,success,(SR+SL)/(ML+MR),0,0

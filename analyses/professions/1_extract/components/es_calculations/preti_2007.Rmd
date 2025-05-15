@@ -1,0 +1,71 @@
+Preti, A., & Vellante, M. (2007). Creativity and Psychopathology: Higher Rates of Psychosis Proneness and Nonright-Handedness Among Creative Artists Compared to Same Age and Gender Peers. The Journal of Nervous and Mental Disease, 195(10), 837–845. https://doi.org/10.1097/NMD.0b013e3181568180
+[[PDF](https://drive.google.com/file/d/1Aa11QXsqRR0e6g13ENfW6VJUplX8Kn8e/view?usp=sharing)]
+
+30 musicians, 25 painters, and 25 writers were compared to 80 controls with noncreative professions.
+
+*"Criteria for inclusion in the index group (herinafter
+“artists”) were: to be involved in an artistic profession requir-
+ing the production of brand-new, original works, to have been
+regularly paid for this activity, to have been exposed to public
+judgment of the produced works via an exhibition (for paint-
+ers), public execution of musical compositions (for musi-
+cians), and publication of books (for writers). A great major-
+ity of artists were also carrying on another profession at the
+time of the investigation. Most were teachers in their specific
+field of expertise; painters were teaching at a local school of
+art, musicians taught at a local conservatory, and writers were
+often teachers in humanities."*
+*Criteria for inclusion in the contrast group (hereinafter
+“controls”) were: to be involved in a profession requiring the
+repetition of activities that contain no element of innovation;
+to have never been paid for a creative work, in any field; to
+have never been exposed to public judgment of any creatively
+produced work, in any field. Controls were mostly teachers in
+the field of humanities or sciences at the local secondary
+school or else they were technicians or white collars in a
+major national telecom company.*
+
+Handedness was measured continuously with the HPQ, and participants were binned as "strong left", "ambidextrous", or "strong right."
+
+The authors report handedness frequencies for each group, as well as a comparison between mean conitnuous handedness score for the full group of artists and controls.
+
+
+T-test comparing all artists' handedness to controls':
+Controls' laterality score on the HPQ was sensibly lower than among artists:
+0.2 (SD = 1.14) versus 1.6 (SD = 3.6), t(158) = 3.41, p = 0.001.
+
+Frequencies by group
+Artists (all):
+65 right, 10 mixed, 5 left
+Controls:
+78 right, 2 mixed, 0 left
+Writers:
+20 right, 5 mixed, 0 left
+Musicians:
+25 right, 2 mixed, 3 left
+Painters:
+20 right, 3 mixed, 2 left
+Writers + Painters
+40 right, 8 mixed, 2 left
+
+Here, writers and painters are binned together.
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "preti_2007"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

@@ -1,0 +1,19 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_left_creative,n_control,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Professionals,Architecture,"Architects, except naval","Non-art, architecture, music",R/L,9,0,5468,722,1i_2pt,mix,R/L,1,0
+Professionals,Art,"Art, drama, and music teachers","Non-art, architecture, music",R/L,1,0,5468,722,1i_2pt,mix,R/L,0,0
+Professionals,Art,"Artists, performers, and related workers NEC","Non-art, architecture, music",R/L,9,0,5468,722,1i_2pt,mix,R/L,0,0
+Professionals,Art,Authors,"Non-art, architecture, music",R/L,2,0,5468,722,1i_2pt,mix,R/L,0,0
+Professionals,Art,Designers,"Non-art, architecture, music",R/L,14,1,5468,722,1i_2pt,mix,R/L,0,0
+Professionals,Art,"Painters, sculptors, craft-artists, and artist printmakers","Non-art, architecture, music",R/L,12,1,5468,722,1i_2pt,mix,R/L,0,0
+Professionals,Art,Photographers,"Non-art, architecture, music",R/L,5,0,5468,722,1i_2pt,mix,R/L,0,0
+Professionals,Art,Artistic occupations,"Non-art, architecture, music",R/L,43,2,5468,722,2i_2pt,mix,R/L,1,0
+Professionals,Music,Musicians and composers,"Non-art, architecture, music",R/L,12,0,5468,722,1i_2pt,mix,R/L,1,0
+Professionals,Architecture,"Architects, except naval","Non-art, architecture, music",S/M,9,0,5468,120,1i_2pt,mix,(SR+SL)/M,1,0
+Professionals,Art,"Art, drama, and music teachers","Non-art, architecture, music",S/M,1,0,5468,120,1i_2pt,mix,(SR+SL)/M,0,0
+Professionals,Art,"Artists, performers, and related workers NEC","Non-art, architecture, music",S/M,9,0,5468,120,1i_2pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Authors,"Non-art, architecture, music",S/M,2,0,5468,120,1i_2pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Designers,"Non-art, architecture, music",S/M,14,0,5468,120,1i_2pt,mix,(SR+SL)/M,0,0
+Professionals,Art,"Painters, sculptors, craft-artists, and artist printmakers","Non-art, architecture, music",S/M,12,1,5468,120,1i_2pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Photographers,"Non-art, architecture, music",S/M,5,0,5468,120,1i_2pt,mix,(SR+SL)/M,0,0
+Professionals,Art,Artistic occupations,"Non-art, architecture, music",S/M,43,1,5468,120,2i_2pt,mix,(SR+SL)/M,1,0
+Professionals,Music,Musicians and composers,"Non-art, architecture, music",S/M,12,0,5468,120,1i_2pt,mix,(SR+SL)/M,1,0

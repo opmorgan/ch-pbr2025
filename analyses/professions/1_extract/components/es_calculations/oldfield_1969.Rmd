@@ -1,0 +1,87 @@
+Oldfield, R. C. (1969). Handedness in musicians. British Journal of Psychology, 60(1), 91–99. https://doi.org/10.1111/j.2044-8295.1969.tb01181.x
+[[PDF](https://drive.google.com/file/d/1WYF2-mixSIL5KvPN_RALgYPX9sVQ8M5E/view?usp=sharing)]
+
+This study measured the handedness of 129 students and staff from a music school, and 1128 psychology undergrads.
+
+Handedness was measured with 22 item, 3 point scale, given in the appendix. Laterality quotients from -100 to 100 were calculated for each participant. The author shows a histogram of scores for the 129 undergrads in figure 1. Based on this figure, 13 of the 129 students are left-handed (measured by a zero-split on the laterality quotient). The author does not report the number of left handers in the undergrad group, but this can be calculated given the reported Chi-squared, assuming there is not an exact match for Chi-squared in each direction. This turns out to be the case: only one number of left-handed undergraduates, 157, yields the reported Chi-squared (1.46). So, the number of left-handed participants, as measure by a 0-split on a laterality quotient, can be extracted for both groups.
+
+Undergrads: 157 left (1128 total)
+Music students and staff: 13 left (129 total)
+
+The study does not provide enough information to extract estimates of strong vs. mixed handedness for both groups (This could be extimated for the music group based on Figure 1, but not for the control group).
+
+
+```{r}
+## Find each group's handedness measured by "Have you ever shown any tendency to left-handedness?"
+## Check against reported Chi-squared
+left_undergrads <- 224
+total_undergrads <- 1128
+left_music <- 27
+total_music <- 129
+(freq_music <- left_music/total_music) # 20.93%
+(freq_undergrads <- left_undergrads/total_undergrads) # 19.86%
+
+## Double check against Chi-squared
+freq_matrix <- matrix(c(left_music, (total_music - left_music),
+                        left_undergrads, (total_undergrads - left_undergrads)), nrow = 2, ncol = 2)
+(chisq <- chisq.test(freq_matrix, correct = F)) # 0.083
+## Reported Chi-Squared: 0.083 (matches; good)
+```
+
+```{r}
+## Calculate the frequency of left handers in the undergrads group,
+## as measured by 0-split,
+## given the frequency in the music group and chi-squared.
+## This may not give a unique value, because two frequencies -- with the difference favoring
+## left, or right, handers -- will give approximately the same value of chi-squared.
+left_music <- 13
+right_music <- 116
+total_music <- 129
+total_undergrads <- 1128
+chi_sq <- 1.46
+
+library(tidyverse)
+chisq_tbl <- tibble(left_undergrads = c(1:(total_undergrads/2)),
+                    chi_sq = as.numeric(NA))
+
+## constrain search so that the number of lefties can take on
+## any value from 1 to half the total numer of undergrads
+## Find chi squared for each possible value
+#for (j = 1:(total_undergrads/2)) {
+for (j in 1:(total_undergrads/2)) {
+  print(j)
+  left_undergrads <- j
+  right_undergrads <- total_undergrads - j
+  freq_matrix <- matrix(c(left_music, (total_music - left_music),
+                          left_undergrads, (total_undergrads - left_undergrads)), nrow = 2, ncol = 2)
+  chisq <- chisq.test(freq_matrix, correct = F)
+  chisq_tbl[j,"chi_sq"]  <- chisq$statistic
+}
+
+## Compare simulated chi-squared values to reported value, 1.46
+chisq_tbl %>% filter(chi_sq > 1.10 & chi_sq < 1.60)
+## n = 157 left-handed undergrads gives an exact match: Chi-squared = 1.46
+## No other number of left-handed undergrads gives an approximate match.
+## I can conclude that there were 157 left-handed undergrads, as measured by 0-split.
+```
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "oldfield_1969"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```
+

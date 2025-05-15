@@ -1,0 +1,61 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Everatt, J., Steffert, B., & Smythe, I. (1999). An eye for the unusual: Creative thinking in dyslexics. Dyslexia, 5(1), 28–46. https://doi.org/10.1002/(SICI)1099-0909(199903)5:1<28::AID-DYS126>3.0.CO;2-K
+
+36 participants (18 dyslexic; of whatever handedness) completed the AUT and TTCT-F (picture construction), and were scored on fluency. The authors report simple correlation coefficients (rho) for both tests.
+
+AUT Fluency: rho(35) = -.03 (lefty advantage)
+TTCT-F Fluency: rho(35) = -0.19 (lefty advantage)
+
+```{r}
+study <- "everatt_1999"
+task <- "TTCT(F)"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+```
+
+```{r}
+es_type <- "rho"
+```
+
+```{r}
+## Load data
+input_filename <- "everatt_1999_ttct-f.csv"
+input_path <- here(extract_dir, "data", "input", input_filename)
+input <- read_csv(input_path)
+## Display data
+pretty_table(input, title = input_filename)
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+unique_n <- input %>% .[["n"]] %>% unique()
+unique_n
+if (length(unique_n == 1)) {
+  n <- unique_n %>% first()
+} else {
+  stop(str_c(study, ", ", task,
+    ": unexpected multiple values for n (total) in input file"))
+}
+
+str_c("n (total): ", n)
+```
+
+```{r}
+measure <- "Fluency"
+rho <- input %>% filter(aut_measure == measure) %>% .[["rho"]]
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

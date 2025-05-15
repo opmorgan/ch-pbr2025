@@ -1,0 +1,25 @@
+Lanthony, P. (1995). Les peintres gauchers. Revue Neurologique.
+
+Numbers are drawn from the APA's English abstract:
+"Reports the results of a study on the prevalence of left-handed painters. The study population included 500 painters from various periods of art history. Determination of Ss' laterality was based on (1) examination of portraits or photographs of Ss, (2) analysis of the direction of Ss' hatchings (i.e., lines used to indicate shading), and (3) review of the relevant literature. 14 left-handed painters were identified, and 7 painters who were thought to be left-handed were found to be right-handed. It is noted that the 2.8% incidence of left-handedness in this sample is far below the 8% incidence of left-handedness in the general population, contradicting assumptions about the high proportion of left-handed painters. (English abstract) (PsycINFO Database Record (c) 2016 APA, all rights reserved)."
+Archived at: https://perma.cc/RM5Y-D5XY
+
+### Load data from input file
+```{r, cache = T}
+## Load and display input data
+study <- "lanthony_1995"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+```{r, results = "markup"}
+es_study <- calculate_es(input, study, OR = F, RR = F, freq = T)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

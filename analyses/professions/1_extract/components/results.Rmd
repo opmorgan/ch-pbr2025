@@ -1,0 +1,85 @@
+```{r, echo = F}
+## Color palette for studies
+pal <- brewer.pal(9, "Pastel1")
+
+es <- es %>%
+  rename(group1 = creative_group, group2 = control_group,
+         comparison = comparison_details)
+
+## Write final table to file
+write_csv(es,
+          here(extract_dir, "data", "output", "extracted_effects.csv"))
+
+```
+```{r, echo = F}
+## Define function to display results
+display_results <- function(es_sub, title = "All studies",
+                            groupname_col = "profession",
+                            color_effects = T,
+                            color_domain = c(0, 2),
+                            palette_effects = c("#b8e186", "#f7f7f7", "#f1b6da"),
+                            color_na = "#f1b6da" ## Hack for ratio scale
+                            ) {
+  es_sub %>%
+    format_p() %>%
+    mutate(pL_creative = str_c(n_left_creative, "/", n_creative, "\n(", round(PL_creative, 2), "%)"),
+           pL_control = str_c(n_left_control, "/", n_control, "\n(", round(PL_control, 2), "%)")) %>%
+    select(study, profession, h, rl_sm, pop,
+           group1, group2, pL_creative, pL_control,
+           lower, effect, upper, chi_sq, p, comparison) %>%
+    arrange(profession, study, rl_sm, comparison, group1, group2, desc(lower)) %>%
+    pretty_table(title = title, groupname_col = groupname_col,
+                 color_effects = color_effects, color_domain = color_domain,
+                 palette_effects = palette_effects,
+                 color_na = color_na
+                 ) %>%
+    data_color(columns = study,
+               colors = scales::col_factor(palette = pal,
+                  domain = NULL)
+              )
+}
+
+## Define function to display results
+display_results_d <- function(es_sub, title = "All studies",
+                            groupname_col = "profession",
+                            color_effects = T,
+                            color_domain = c(2.7, -2.7),
+                            palette_effects = c("#f1b6da","#f7f7f7", "#b8e186"),
+                            color_na = "#f1b6da" ## Hack for ratio scale
+                            ) {
+  es_sub %>%
+    format_p() %>%
+    select(study, profession, h, rl_sm, pop,
+           group1, group2, n_creative, n_control,
+           lower, effect, upper, comparison) %>%
+    arrange(profession, study, rl_sm, comparison, group1, group2, desc(lower)) %>%
+    pretty_table(title = title, groupname_col = groupname_col,
+                 color_effects = color_effects, color_domain = color_domain,
+                 palette_effects = palette_effects,
+                 color_na = color_na
+                 ) %>%
+    data_color(columns = study,
+               colors = scales::col_factor(palette = pal,
+                  domain = NULL)
+              )
+}
+
+es_sub <- es # %>% filter(include == 1)
+```
+
+
+## R/L {.tabset .tabset-pills}
+
+```{r, echo = F}
+display_results(es_sub %>% filter(es_type == "OR" & rl_sm == "R/L"
+                                  & include == 1 & exclude_rnr == 0))
+```
+
+
+
+## S/M {.tabset .tabset-pills}
+
+```{r, echo = F}
+display_results(es_sub %>% filter(es_type == "OR" & rl_sm == "S/M"
+                                  & include == 1 & exclude_rnr == 0))
+```

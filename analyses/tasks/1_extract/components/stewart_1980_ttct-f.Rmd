@@ -1,0 +1,133 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Stewart, C. A., & Clayson, D. (1980). A Note on Change in Creativity by Handedness Over A Maturational Time Period. The Journal of Psychology, 104(1–2), 39–42. https://doi.org/10.1080/00223980.1980.12062947
+
+TTCT-F Scores: Originality, Elaboration, Flexibility, and Fluency, and a Total score, which is the mean of the four subscores.
+
+The authors report:
+1. For Total score, Originality, and Elaboration, the results of an F-test for a model including handedness and age as IVs, and total creativity score (mean of the four subscores) as the DV. For Flexibility and Fluency, this test is reported as "No significant effect" of handedness.
+1. For all subscores, each handedness group's mean.
+1. For Total score, a graph showing group means and an unlabeled error bar.
+
+For analysis, Cohen's D is extracted for the Reported F-tests, and the missing test results are marked as "unreported" (coded as NA). (The difference in means for both unreported tests trends in the same direction as the reported tests).
+
+```{r}
+study <- "stewart_1980"
+task <- "TTCT(F)"
+```
+
+```{r}
+handedness_measure <- "Harris"
+rl_sm <- "R/L"
+es_type <- "d_p"
+```
+
+```{r}
+## Load data
+input_filename <- "stewart_1980_ttct-f.csv"
+input_path <- here(extract_dir, "data", "input", input_filename)
+input <- read_csv(input_path)
+## Display data
+pretty_table(input, title = input_filename)
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+n_input <- data.frame(n_right = NA, n_left = NA)
+for (h in c("n_right", "n_left")) {
+  unique_n <- input %>% .[[h]] %>% unique()
+  if (length(unique_n == 1)) {
+    n_input[[h]]  <- unique_n %>% first()
+    n_input
+  } else {
+    stop(str_c(study, ", ", task,
+      ": unexpected multiple values for n (right handers) in input file"))
+  }
+}
+
+n_right <- n_input$n_right
+n_left <- n_input$n_left
+str_c(n_right, ", ", n_left)
+```
+
+```{r}
+measure <- "Total"
+##TODO: Could calculate this based on Figure 1, assuming lines are SEM
+```
+
+```{r}
+measure <- "Flexibility"
+
+esci <- tibble(lower = NA, upper = NA, effect = NA)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "Only 'no significant effect'",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Fluency"
+
+esci <- tibble(lower = NA, upper = NA, effect = NA)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "Only 'no significant effect'",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Originality"
+f <- input %>% filter(ttct_measure == measure) %>% .[["f"]]
+
+d <- f_to_d(f, n1= n_right, n2 = n_left, sign = "neg")
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From F, n1, n2 (ANOVA with 3 age groups, handedness)",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+measure <- "Elaboration"
+f <- input %>% filter(ttct_measure == measure) %>% .[["f"]]
+
+d <- f_to_d(f, n1= n_right, n2 = n_left, sign = "neg")
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n1 = n_right, n2 = n_left,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From F, n1, n2 (ANOVA with 3 age groups, handedness)",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

@@ -1,0 +1,850 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Zickert, N., Geuze, R. H., van der Feen, F. E., & Groothuis, T. G. G. (2018). Fitness costs and benefits associated with hand preference in humans: A large internet study in a Dutch sample. Evolution and Human Behavior, 39(2), 235–248. https://doi.org/10.1016/j.evolhumbehav.2018.01.001
+
+The authors report linear and quadratic models of the effect of EHI handedness (binned by Strong Left, Moderate Left, Ambidextrous, Moderate Right, Strong Right) on divergent thinking (with covariates). They also provided raw data, which can be used to construct simple correlation and group difference statistics. 
+
+For the AUT, subjects were all asked: "Within two minutes, enter as many uses for a book that you can think of."
+
+Fluency: the number of valid answers.
+Originality: unique answers were divided into ten bins, from the 10% most common to the 10% least common. Each answer received an integer score from 1 (most common) to 10 (least common/most original). These were summed for each person.
+"Originality per fluency": divide originality score by the number of valid answers.
+
+Linear model fits for the effect of handedness direction on each subscore are shown in table 4. For each divergent thinking measure, n = 9089 (Only 9089 of ~20k participants completed this section of the questionnaire).
+
+AUT scores are also reported in a GLM analysis as a factor that includes all three scores.
+"For artistic creativity (PC 2 creativity) there is only a linear effect of hand preference with a small effect size and a qua- dratic but very small effect of age (Fig. 4b, Tables 4 and 6)."
+
+The authors report eta^2 and n for the effect of handedness on each AUT score. Partial rho exracted from eta squared can be reported in a separate table/section from other studies:
+"Partial effect sizes should not be combined with bivariate correlations, nor should different types of partial effect sizes be combined. Meta-analysts should present two sets of analyses: one for bivariate correlations and one for partial effects. For an example, see Aloe and Becker (2009)." (Aloe & Thompson, 2014)
+
+Per Lakens 2013, 90% CI should be used for partial eta^2 to compare with 95% CI on Cohen's D or rho, because F-tests are always one-sided.
+
+Raw data are available and can be used to find simple rho and Cohen's D for R/L and S/M handedness. These effect sizes should be used in meta-analysis because they enable pooling with other studies.
+
+
+### Extract reported stats
+(1) Extract the reported statistics (partial rho from models with covariates)
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+es_type <- "rho_p"
+```
+
+```{r}
+## Statistics are from table 4
+n <- 9089
+measure <- "Fluency"
+eta_sq <- 0.006
+sign <- "pos" ## Which direction is the effect? "pos" for RH advantage
+
+## Calculate partial rho from partial eta^2
+## then find CI for partial rho with MBESS
+rho_p <- r2_to_rho(eta_sq, sign = "pos")
+esci <- rho_p_ci(rho_p, N = n, K = 4, conf.level = 0.95)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n = n, h = handedness_measure, rl_sm = "R/L",
+          notes = "From partial eta^2 (sex [fixed], age [random], age^2 [random])",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+n <- 9089
+measure <- "Originality"
+eta_sq <- 0.007
+sign <- "pos" ## Which direction is the effect? "pos" for RH advantage
+
+## Calculate partial rho from partial eta^2,
+## then find CI for partial rho with MBESS
+rho_p <- r2_to_rho(eta_sq, sign = "pos")
+esci <- rho_p_ci(rho_p, N = n, K = 4, conf.level = 0.95)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n = n, h = handedness_measure, rl_sm = "R/L",
+          notes = "From partial eta^2 (sex [fixed], age [random], age^2 [random])",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+n <- 9089
+measure <- "Originality/Fluency"
+eta_sq <- 0.003
+sign <- "pos" ## Which direction is the effect? "pos" for RH advantage
+
+## Calculate partial rho from partial eta^2,
+## then find CI for partial rho with MBESS
+rho_p <- r2_to_rho(eta_sq, sign = "pos")
+esci <- rho_p_ci(rho_p, N = n, K = 4, conf.level = 0.95)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n = n, h = handedness_measure, rl_sm = "R/L",
+          notes = "From partial eta^2 (sex [fixed], age [random], age^2 [random])",
+          include = 1
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+```{r}
+## Check work: treat eta_sq as R^2, find CI. These should be pretty close
+es_type <- "rho"
+n <- 9089
+measure <- "Fluency"
+eta_sq <- 0.006
+rho <- sqrt(eta_sq)
+esci <- rho_ci(rho, n, alpha = 0.05) ## Defined and explained in lib/utils.R
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, h = handedness_measure, rl_sm = "R/L",
+          effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          notes = "From rho, n", include = 0
+  )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+
+This yields rho = 0.057, 90% CI [0.057, 0.098], very similar to that calculated with MBESS' R.CI for multiple regression (90% CI [0.058, 0.093]
+
+
+### Extract from raw data
+(2) Extract simple rho and Cohen's D from raw data.
+```{r load_zickert}
+## Load the data
+raw_data <- read_csv(here(extract_dir, "data", "input", "zickert_2018_aut", "analysis_data.csv"),
+                     col_types = cols(
+  ID = col_character(),
+  EHIscore = col_double(),
+  EHIscore_2 = col_double(),
+  age = col_character(),
+  age_2 = col_double(),
+  sex = col_character(),
+  children_YN = col_character(),
+  compl_children = col_double(),
+  child_0total = col_double(),
+  S_hand_pref = col_double(),
+  S_art_crea = col_double(),
+  S_prob_crea = col_double(),
+  S_aggression = col_double(),
+  S_health = col_double(),
+  Cre_A_total = col_double(),
+  A_10jaar_fight = col_character(),
+  A_10jaar_fight_wins = col_character(),
+  A_child_fight = col_character(),
+  A_10jaar_scheld = col_character(),
+  check_aggr2 = col_double(),
+  H_2sick = col_character(),
+  H_2sickdays = col_character(),
+  H_comp = col_double(),
+  H_allergy_YN = col_character(),
+  H_allergens = col_character(),
+  H_premat_YN = col_character(),
+  H_dyslex_YN = col_character(),
+  DT_fluency = col_double(),
+  DT_originality = col_double(),
+  DT_combined = col_double(),
+  CT_cor2_per_unknown_math = col_double(),
+  CT_cor2_per_unknown_verb = col_character(),
+  CT_cor2_per_unknown_total = col_double(),
+  EHI_HVK_5 = col_character(),
+  select_slider_and_quest = col_double(),
+  exclude_age_sex_weird = col_character(),
+  ehi_miss = col_character(),
+  H_sick = col_character(),
+  H_sickdays = col_character(),
+  H_3sick = col_double(),
+  FAC1_2 = col_character(),
+  FAC1_1 = col_double(),
+  FAC1_6 = col_double(),
+  FAC2_6 = col_double(),
+  FAC3_6 = col_double(),
+  FAC1_3 = col_double(),
+  FAC1_4 = col_double(),
+  FAC1_10 = col_double(),
+  FAC2_10 = col_double(),
+  FAC3_10 = col_double(),
+  RES_23 = col_double(),
+  RES_24 = col_double(),
+  RES_25 = col_double(),
+  RES_26 = col_double(),
+  RES_27 = col_double(),
+  Residual_1 = col_double(),
+  Residual_2 = col_character(),
+  Residual_3 = col_double(),
+  Residual_4 = col_character(),
+  allergy_DevianceResidual_1 = col_character(),
+  DevianceResidual_1 = col_double(),
+  DR_allerg = col_double(),
+  DR_dyslex = col_double(),
+  DevianceResidual_2 = col_double(),
+  Residual_8 = col_double(),
+  Resid_children_invert = col_double(),
+  Residual_9 = col_character(),
+  RES_28 = col_double(),
+  `filter_$` = col_character(),
+  RES_1 = col_character(),
+  RES_2 = col_character(),
+  RES_3 = col_double(),
+  RES_4 = col_double(),
+  RES_5 = col_double(),
+  RES_6 = col_double(),
+  RES_7 = col_double(),
+  RES_8 = col_double(),
+  Inverse_resid_fights_won = col_double(),
+  Residual = col_double(),
+  Residual_5 = col_double(),
+  RES_9 = col_double(),
+  Residual_6 = col_double(),
+  Inverse_resid_dyslexia = col_double(),
+  Inverse_resid_allergies = col_character()
+))
+```
+
+```{r clean_zickert}
+#### Clean the data
+
+## Authors' exclusions:
+
+# - had missing data on any of the questions that were used in the statistical analysis and were not optional (except for the number of children as this question was added to the questionnaire in a later stage of the project). 
+# - did not specify their sex as male or female. 
+# - were under the age of 15 years and over 100 years. 
+# - indicated that they have a temporary or permanent limitation in one oftheirarmsorhands. 
+# - gave nonsensical answers (e.g. being 20 years old having three grandchildren).
+
+## Remove rows that readr could not parse
+problem_rows <- problems(raw_data) |> pull(row)
+proc <- raw_data |> 
+  slice(-problem_rows) |> 
+## Apply authors' exclusions
+  filter(
+  `filter_$` =="Selected"
+)
+
+
+## Create an asymmetry score based on raw EHI values
+proc <- proc |> 
+  mutate(EHI_abs = abs(EHIscore))
+
+## Create categorical handedness variables
+proc <- proc |> mutate(
+  handedness_rl = case_when(EHIscore > 0 ~ "right",
+                            EHIscore <= 0 ~ "left"),
+  handedness_sm = case_when(
+    EHIscore %in% c(-20, 20) ~ "strong",
+    EHIscore < 20 & EHIscore > -20 ~ "mixed"
+  ),
+    handedness_rml = factor(
+    case_when(
+      handedness_rl == "right" &
+        handedness_sm == "strong" ~ "strong right",
+      handedness_rl == "right" &
+        handedness_sm == "mixed" ~ "mixed",
+      handedness_rl == "left" &
+        handedness_sm == "mixed" ~ "mixed",
+      handedness_rl == "left" &
+        handedness_sm == "strong" ~ "strong left"
+    ),
+    levels = c("strong left", "mixed", "strong right")
+  ),
+  handedness_rmml = factor(
+    case_when(
+      handedness_rl == "right" &
+        handedness_sm == "strong" ~ "strong right",
+      handedness_rl == "right" &
+        handedness_sm == "mixed" ~ "mixed right",
+      handedness_rl == "left" &
+        handedness_sm == "mixed" ~ "mixed left",
+      handedness_rl == "left" &
+        handedness_sm == "strong" ~ "strong left"
+    ),
+    levels = c("strong left", "mixed left", "mixed right", "strong right")
+  ),
+  handedness_3q = santoku::chop_equally(
+    proc$EHIscore, groups = 4, labels = c("Left", "Mixed", "Right")),
+  handedness_rl_median = case_when(
+    EHIscore > median(EHIscore) ~ "right",
+    EHIscore <= median(EHIscore) ~ "left"),
+  handedness_sm_median = case_when(
+    EHI_abs >= median(EHI_abs) ~ "strong",
+    EHI_abs < median(EHI_abs) ~ "mixed")
+)
+
+
+# proc |> group_by(handedness_rmml) |> 
+#   count()
+# proc |> group_by(handedness_rml) |> 
+#   count()
+
+## filter to participants with fluency or originality data
+## (All participants who have either have the other)
+proc <- proc |> filter(!is.na(DT_fluency))
+## EHIscore are raw EHI scores.
+## EHIscore_2 are squared EHI scores (which the authors used as their measure of laterality)
+```
+
+#### R/L {.tabset}
+
+##### Fluency (rho)
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+es_type <- "rho"
+measure <- "Fluency"
+
+
+cor_results <- cor.test(proc$EHIscore, proc$DT_fluency)
+
+df <- cor_results$parameter[["df"]]
+n <- cor_results$parameter[["df"]] + 2
+rho <- cor_results$estimate
+
+n_left <- proc |> filter(handedness_rl == "left") |> count() |> pull(n)
+n_right <- proc |> filter(handedness_rl == "right") |> count() |> pull(n)
+
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, n1 = n_right, n2 = n_left,
+          effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From raw data", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+```
+
+##### Fluency (D)
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+es_type <- "d"
+measure <- "Fluency"
+
+group_stats <- proc |> 
+  mutate(handedness = handedness_rl) |> 
+  group_by(handedness) |> 
+  summarize(
+    n = n(),
+    mean = mean(DT_fluency),
+    sd = sd(DT_fluency)
+  )
+
+n1 <- group_stats |> filter(handedness == "right") |> pull(n)
+n2 <- group_stats |> filter(handedness == "left") |> pull(n)
+m1 <- group_stats |> filter(handedness == "right") |> pull(mean)
+m2 <- group_stats |> filter(handedness == "left") |> pull(mean)
+sd1 <- group_stats |> filter(handedness == "right") |> pull(sd)
+sd2 <- group_stats |> filter(handedness == "left") |> pull(sd)
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = "R/L",
+          n = n1 + n2, n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From raw data", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+```
+
+
+##### Originality (rho)
+
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+es_type <- "rho"
+measure <- "Originality"
+
+
+cor_results <- cor.test(proc$EHIscore, proc$DT_originality)
+
+df <- cor_results$parameter[["df"]]
+n <- cor_results$parameter[["df"]] + 2
+rho <- cor_results$estimate
+
+n_left <- proc |> filter(handedness_rl == "left") |> count() |> pull(n)
+n_right <- proc |> filter(handedness_rl == "right") |> count() |> pull(n)
+
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, n1 = n_right, n2 = n_left,
+          effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From raw data", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+```
+
+
+##### Originality (D)
+
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+es_type <- "d"
+measure <- "Originality"
+
+group_stats <- proc |> 
+  mutate(handedness = handedness_rl) |> 
+  group_by(handedness) |> 
+  summarize(
+    n = n(),
+    mean = mean(DT_originality),
+    sd = sd(DT_originality)
+  )
+
+n1 <- group_stats |> filter(handedness == "right") |> pull(n)
+n2 <- group_stats |> filter(handedness == "left") |> pull(n)
+m1 <- group_stats |> filter(handedness == "right") |> pull(mean)
+m2 <- group_stats |> filter(handedness == "left") |> pull(mean)
+sd1 <- group_stats |> filter(handedness == "right") |> pull(sd)
+sd2 <- group_stats |> filter(handedness == "left") |> pull(sd)
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = "R/L",
+          n = n1 + n2, n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From raw data", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+```
+
+### S/M {.tabset}
+
+#### Fluency (rho)
+
+Because of the imbalanced n between strong left and right handers, a simple correlation test cannot distinguish between an effect of strong handedness, and an effect of left handedness.
+
+We can undersample left handers and then run the correlation test, but a significant correlation may still be driven by a large effect of direction of handedness.
+
+Undersample left handers. (Randomly select 1316 from each handedness group).
+```{r}
+set.seed(123)
+undersample_strong_left <- proc |> 
+  filter(handedness_rmml == "strong left") |> 
+  slice_sample(n = 1316, replace = F)
+
+set.seed(123)
+undersample_mixed_left <- proc |> 
+  filter(handedness_rmml == "mixed left") |> 
+  slice_sample(n = 1316, replace = F)
+
+set.seed(123)
+undersample_mixed_right <- proc |> 
+  filter(handedness_rmml == "mixed right") |> 
+  slice_sample(n = 1316, replace = F)
+
+set.seed(123)
+strong_right <- proc |> 
+  filter(handedness_rmml == "strong right") |> 
+  slice_sample(n = 1316, replace = F)
+
+proc_undersampled <- bind_rows(
+  undersample_strong_left,
+  undersample_mixed_left,
+  undersample_mixed_right,
+  strong_right
+)
+
+proc_undersampled |> group_by(handedness_sm, handedness_rl) |> 
+  summarize(n = n(),
+            mean = mean(DT_fluency)
+  ) |> 
+  pretty_table()
+```
+<br>
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "rho"
+measure <- "Fluency"
+
+
+cor_results <- cor.test(proc_undersampled$EHI_abs, 
+                        proc_undersampled$DT_fluency)
+
+df <- cor_results$parameter[["df"]]
+n <- cor_results$parameter[["df"]] + 2
+rho <- cor_results$estimate
+
+n_left <- proc_undersampled |> filter(handedness_sm == "mixed") |> count() |> pull(n)
+n_right <- proc_undersampled |> filter(handedness_sm == "strong") |> count() |> pull(n)
+
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, n1 = n_right, n2 = n_left,
+          effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From raw data (undersampling)", include = 0
+          )
+
+es |> tail(1) |> pretty_table()
+
+```
+
+If we don't undersample, we see a stronger "mixed hand advantage", driven by low scores from lefties.
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "rho"
+measure <- "Fluency"
+
+
+cor_results <- cor.test(proc$EHI_abs, 
+                        proc$DT_fluency)
+
+df <- cor_results$parameter[["df"]]
+n <- cor_results$parameter[["df"]] + 2
+rho <- cor_results$estimate
+
+n_left <- proc |> filter(handedness_sm == "mixed") |> count() |> pull(n)
+n_right <- proc |> filter(handedness_sm == "strong") |> count() |> pull(n)
+
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, n1 = n_right, n2 = n_left,
+          effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From raw data (unbalanced groups)", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+
+```
+<br>
+<br>
+<br>
+Estimate the effect of degree of handedness, with direction as a covariate.
+```{r results="markup"}
+lm1 <- lm(data = proc, formula = DT_fluency ~ EHIscore + EHI_abs)
+summary(lm1)
+```
+<br>
+Undersampling lefties:
+```{r results="markup"}
+lm1 <- lm(data = proc_undersampled, formula = DT_fluency ~ EHIscore + EHI_abs)
+summary(lm1)
+```
+<br>
+These linear models suggest that both right handedness, and mixed handedness, contribute to divergent thinking (however, the effect of mixed handedness could be driven by low divergent thinking in strong lefties).
+
+#### Fluency (D)
+
+"Strong": EHI extremes of +-20; "Mixed": everyone in-between (Unbalanced groups: there are more lefties than righties).
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "d"
+measure <- "Fluency"
+
+group_stats <- proc |> 
+  mutate(handedness = handedness_sm) |> 
+  group_by(handedness) |> 
+  summarize(
+    n = n(),
+    mean = mean(DT_fluency),
+    sd = sd(DT_fluency)
+  )
+
+n1 <- group_stats |> filter(handedness == "strong") |> pull(n)
+n2 <- group_stats |> filter(handedness == "mixed") |> pull(n)
+m1 <- group_stats |> filter(handedness == "strong") |> pull(mean)
+m2 <- group_stats |> filter(handedness == "mixed") |> pull(mean)
+sd1 <- group_stats |> filter(handedness == "strong") |> pull(sd)
+sd2 <- group_stats |> filter(handedness == "mixed") |> pull(sd)
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = rl_sm,
+          n = n1 + n2, n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From raw data (unbalanced groups)", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+```
+<br>
+The mixed hand advantage is driven by low Fluency for strong left handers.
+```{r}
+proc |> group_by(handedness_rl, handedness_sm) |> 
+  summarize(n = n(),
+            mean = mean(DT_fluency)
+  ) |> 
+  pretty_table()
+```
+<br>
+<br>
+
+
+Undersample left handers. (Randomly select 1316 from each handedness group).
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "d"
+measure <- "Fluency"
+
+group_stats <- proc_undersampled |> 
+  mutate(handedness = handedness_sm) |> 
+  group_by(handedness) |> 
+  summarize(
+    n = n(),
+    mean = mean(DT_fluency),
+    sd = sd(DT_fluency)
+  )
+
+n1 <- group_stats |> filter(handedness == "strong") |> pull(n)
+n2 <- group_stats |> filter(handedness == "mixed") |> pull(n)
+m1 <- group_stats |> filter(handedness == "strong") |> pull(mean)
+m2 <- group_stats |> filter(handedness == "mixed") |> pull(mean)
+sd1 <- group_stats |> filter(handedness == "strong") |> pull(sd)
+sd2 <- group_stats |> filter(handedness == "mixed") |> pull(sd)
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = rl_sm,
+          n = n1 + n2, n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From raw data (undersampling)", include = 0
+          )
+
+es |> tail(1) |> pretty_table()
+```
+<br>
+<br>
+<br>
+Use a linear model to estimate the effect of degree of handedness, with direction as a covariate.
+```{r results="markup"}
+lm1 <- lm(data = proc, formula = DT_fluency ~ handedness_rl + handedness_sm)
+summary(lm1)
+```
+<br>
+Undersampling lefties:
+```{r results="markup"}
+lm1 <- lm(data = proc_undersampled, formula = DT_fluency ~ handedness_rl + handedness_sm)
+summary(lm1)
+```
+<br>
+These linear models suggest that both right handedness, and mixed handedness, contribute to divergent thinking (however, the effect of mixed handedness could be driven by low divergent thinking in strong lefties).
+<br>
+
+
+#### Originality (rho)
+
+Undersample left handers. (Randomly select 1316 from each handedness group).
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "rho"
+measure <- "Originality"
+
+
+cor_results <- cor.test(proc_undersampled$EHI_abs, 
+                        proc_undersampled$DT_originality)
+
+df <- cor_results$parameter[["df"]]
+n <- cor_results$parameter[["df"]] + 2
+rho <- cor_results$estimate
+
+n_left <- proc_undersampled |> filter(handedness_sm == "mixed") |> count() |> pull(n)
+n_right <- proc_undersampled |> filter(handedness_sm == "strong") |> count() |> pull(n)
+
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, n1 = n_right, n2 = n_left,
+          effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From raw data (undersampling)", include = 0
+          )
+
+es |> tail(1) |> pretty_table()
+
+```
+
+If we don't undersample, we see a stronger "mixed hand advantage", driven by low scores from lefties.
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "rho"
+measure <- "Originality"
+
+
+cor_results <- cor.test(proc$EHI_abs, 
+                        proc$DT_originality)
+
+df <- cor_results$parameter[["df"]]
+n <- cor_results$parameter[["df"]] + 2
+rho <- cor_results$estimate
+
+n_left <- proc |> filter(handedness_sm == "mixed") |> count() |> pull(n)
+n_right <- proc |> filter(handedness_sm == "strong") |> count() |> pull(n)
+
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, n1 = n_right, n2 = n_left,
+          effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From raw data (unbalanced groups)", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+
+```
+
+#### Originality (D)
+
+"Strong": EHI extremes of +-20; "Mixed": everyone in-between (Unbalanced groups: there are more lefties than righties).
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "d"
+measure <- "Originality"
+
+group_stats <- proc |> 
+  mutate(handedness = handedness_sm) |> 
+  group_by(handedness) |> 
+  summarize(
+    n = n(),
+    mean = mean(DT_originality),
+    sd = sd(DT_originality)
+  )
+
+n1 <- group_stats |> filter(handedness == "strong") |> pull(n)
+n2 <- group_stats |> filter(handedness == "mixed") |> pull(n)
+m1 <- group_stats |> filter(handedness == "strong") |> pull(mean)
+m2 <- group_stats |> filter(handedness == "mixed") |> pull(mean)
+sd1 <- group_stats |> filter(handedness == "strong") |> pull(sd)
+sd2 <- group_stats |> filter(handedness == "mixed") |> pull(sd)
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = rl_sm,
+          n = n1 + n2, n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From raw data (unbalanced groups)", include = 1
+          )
+
+es |> tail(1) |> pretty_table()
+```
+<br>
+
+Undersample left handers. (Randomly select 1316 from each handedness group).
+```{r}
+study <- "zickert_2018"
+task <- "AUT"
+handedness_measure <- "EHI"
+rl_sm <- "S/M"
+es_type <- "d"
+measure <- "Originality"
+
+group_stats <- proc_undersampled |> 
+  mutate(handedness = handedness_sm) |> 
+  group_by(handedness) |> 
+  summarize(
+    n = n(),
+    mean = mean(DT_originality),
+    sd = sd(DT_originality)
+  )
+
+n1 <- group_stats |> filter(handedness == "strong") |> pull(n)
+n2 <- group_stats |> filter(handedness == "mixed") |> pull(n)
+m1 <- group_stats |> filter(handedness == "strong") |> pull(mean)
+m2 <- group_stats |> filter(handedness == "mixed") |> pull(mean)
+sd1 <- group_stats |> filter(handedness == "strong") |> pull(sd)
+sd2 <- group_stats |> filter(handedness == "mixed") |> pull(sd)
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n1, n2 = n2, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          h = handedness_measure, rl_sm = rl_sm,
+          n = n1 + n2, n1 = n1, n2 = n2,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          notes = "From raw data (undersampling)", include = 0
+          )
+
+es |> tail(1) |> pretty_table()
+```
+<br>
+

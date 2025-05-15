@@ -1,0 +1,44 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Turner, C. E., Hahn, M. E., & Kellogg, R. T. (2017). Semantic processing in the left versus right cerebral hemispheres following unilateral hand contractions. Laterality: Asymmetries of Body, Brain and Cognition, 22(2), 219–232. https://doi.org/10.1080/1357650X.2016.1154861
+
+The study reports this result for the correlation between EHI score and RAT score (number of problems answered correctly in 15 minutes)
+"We also examined whether the laterality quotients of participants were
+related to task performance. Scores of above 75–80 indicate strong right
+handedness and in the vast majority of cases, LH dominance. The laterality
+quotient was not reliably related to remote associate scores (r = .07)."
+
+The formula for "r" was not reported. I will presume that it is a Pearson correlation coefficient, because this is standard when correlated continuous variables (EHI and RAT scores are both ordinal scores with many levels, which might be treated as continuous).
+Because none were reported, I will assume that no covariates were included in this correlation analysis.
+
+There were 60 participants total: 43 strong right, 17 non-right handers.
+
+
+### {.tabset}
+```{r}
+study <- "turner_2017"
+task <- "RAT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+es_type <- "rho"
+```
+
+```{r}
+measure <- "Total problems solved in 15 minutes"
+n <- 60
+rho <- 0.07
+
+esci <- rho_ci(rho, n, alpha = 0.05) ## Defined in lib/utils.R
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

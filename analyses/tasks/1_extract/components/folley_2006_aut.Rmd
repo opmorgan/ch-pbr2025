@@ -1,0 +1,58 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R -->
+
+Folley, B. S. (2006). The cognitive neuroscience of creative thinking in the schizophrenia spectrum: Individual differences, functional laterality and white matter connectivity [PhD Thesis].
+
+51 participants (17 with schizophrenia, 17 schizotypic, and 17 without schizotypy) completed several versions of an AUT. The "conventional objects" condition is the classic AUT and can be considered in this meta-analysis.The author reports a simple correlation between handedness (measured with the EHI) and AUT Fluency (rho = -.15, favoring left handers), on p. 42 (Table 6).
+
+```{r}
+study <- "folley_2006"
+task <- "AUT"
+```
+
+```{r}
+handedness_measure <- "EHI"
+rl_sm <- "R/L"
+```
+
+```{r}
+es_type <- "rho"
+```
+
+```{r}
+## Load data
+input_filename <- "folley_2006_aut.csv"
+input_path <- here(extract_dir, "data", "input", input_filename)
+input <- read_csv(input_path)
+## Display data
+pretty_table(input, title = input_filename)
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+unique_n <- input %>% .[["n"]] %>% unique()
+unique_n
+if (length(unique_n == 1)) {
+  n <- unique_n %>% first()
+} else {
+  stop(str_c(study, ", ", task,
+    ": unexpected multiple values for n (total) in input file"))
+}
+
+str_c("n (total): ", n)
+```
+
+```{r}
+measure <- "Fluency"
+rho <- input %>% filter(aut_measure == measure) %>% .[["rho"]]
+esci <- rho_ci(rho, n, alpha = 0.05)
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          n = n, effect = esci$rho, lower = esci$lower, upper = esci$upper,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From rho, n", include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

@@ -1,0 +1,128 @@
+Christman, S. D. (1993). Handedness in Musicians: Bimanual Constraints on Performance. Brain and Cognition, 22(2), 266–272. https://doi.org/10.1006/brcg.1993.1038
+[[PDF](https://drive.google.com/file/d/1nNkB0-AFmkOk3GGz3Gc_eyDbDuOBxHfC/view?usp=sharing)]
+
+This study reports the handedness of 196 music school faculty, whose principal instruments were "bimanually integrated" (requiring both hands to work synchronously together, e.g. strings, woodwinds; n = 82), "bimanually independent" (requiring both hands asymmetrically, e.g., piano; n = 81) and "unimanual" (where one hand does most of the work, e.g., tuba; n = 33).
+
+Handedness was measured with the EHI, and a laterality quotient from -100 to 1000 was calculated for each participant. Binned laterality quotients for integrated and independent instrument players is shown in Figure 1.
+
+The study does not report any comparisons between a creative and noncreative group. The authors predicted that because "integrated" instruments would be easier to play for mixed handers than "independent," mixed handers would be overreppresented among "integrated" musicians. This prediction was confirmed in 2/3 analyses, with the third in the predicted direction. This manual advantage could explain why mixed handers are overrepresented in instrumental music.
+
+Mean laterality quotients are reported for each group of instrumentalists (Table 2), but do not include enough information to calculate confidence intervals.
+
+The number of mixed vs. strong handers can be estimated based on Figure 1, and reported as a frequency estimate with no control group. I will count "strong handers" as those in the most extreme bins in this diagram — those with laterality scores greater than 90 or less than -90. I count:
+Independent: 2 strong left handers, and 37 strong right handers.
+Integrated: 0 strong left handers, and 23 strong right handers.
+
+I can check these numbers against the results of the reported chi-square test: Chi-squared = 6.985.
+
+```{r}
+## Check estimate of strong/mixed hander count against reported chi-square
+total_independent <- 81
+strong_independent <- 39
+(mixed_independent <- total_independent - strong_independent) # 42
+total_integrated <- 82
+strong_integrated <- 23
+(mixed_integrated <- total_integrated - strong_integrated) # 59
+
+(freq_independent <- mixed_independent/total_independent) # 51.85 %
+(freq_integrated <- mixed_integrated/total_integrated) # 71.95 %
+
+## Double check against Chi-squared
+freq_matrix <- matrix(c(mixed_independent, strong_independent,
+                        mixed_integrated, strong_integrated),
+                      nrow = 2, ncol = 2)
+(chisq <- chisq.test(freq_matrix, correct = F))
+
+## The reported Chi-squared value was 6.985
+## With independent n (strong) = 39 and integrated n (strong = 23), Chi-squared = 6.1578 (with Yate's correction), or 6.9845 (without)
+```
+The extracted values, 39 strong handers (independent) and 23 strong handers (integrated) match the reported chi-squared statistic exactly, so I will take them to be correct.
+
+I can also extract numbers for right vs. left handers in each group, based on Figure 1. I count:
+Independent: 9 below 0; 11 between 0 and +70; 13 between 71-80; 11 between 81-90; 39 between 91-100. (9 below 0, 74 above 0 = 83) (Should be 81)
+```{r}
+## Check total
+(9+11+13+11+39) # 83
+## There should be 81.
+```
+I will assume that the count of left handers (scores below zero; counted as 9) is correct, and check this against the reported chi-squared test. (The discrepancy could be due to noise in trying to count values from the figure, especially larger numbers farther from the axis.)
+
+Integrated: 12 below 0; 16 between - and +70; 14+17= 31 between 71-90; 23 between 91-100 (12 below 0; 70 above 0)
+```{r}
+## Check total
+(12+16+14+17+23)
+## There are 82. Correct
+```
+These numbers can be checked against the reported chi-squared test, Chi-squared = .451
+```{r}
+## Check estimate of left/right hander count against reported chi-square
+total_independent <- 81
+left_independent <- 9
+(right_independent <- total_independent - left_independent) # 72
+total_integrated <- 82
+left_integrated <- 12
+(right_integrated <- total_integrated - left_integrated) # 70
+
+(freq_independent <- left_independent/total_independent) # 11.11 %
+(freq_integrated <- left_integrated/total_integrated) # 14.63 %
+
+## Double check against Chi-squared
+freq_matrix <- matrix(c(left_independent, right_independent,
+                        left_integrated, right_integrated),
+                      nrow = 2, ncol = 2)
+(chisq <- chisq.test(freq_matrix, correct = F))
+
+## The reported Chi-squared value was 0.451
+## With independent n (left) = 9 and integrated n (left = 12), Chi-squared = 0.451 (without Yate's correction)
+```
+The extracted values, 9 left handers (independent) and 12 left handers (integrated) match the reported chi-squared statistic exactly, so I will take them to be correct.
+
+I do not see a way to extract frequencies for the third group, musicians whose instruments are "unimanual."
+
+It may also be worthwhile to visualize the study's main comparison, between independent and integrated musicians, in a separate table, because it is important to the narrative review's argument. This comparison is reported in a few ways: (1) comparing the absolute value of laterality scores between groups with an F-test; (2a) comparing mixed/strong hander frequencies with a chi square test, using a cutoff of +/-50; and (2b) With a chisquare test, using a cutoff of +/- 90. I will mark this comparison as "include = 0" in the input dataset, code the integrated instument players as "creative group", and report this comparison in a separate table.
+
+So, I will report:
+
+* For integrated and independent musicians, no-control-group frequency estimates for R/L (0-split), S/M (laterality quotient greater or less than +/- 90
+* (To use in a separate table) An odds ratio comparing left/mixed handedness for integrated vs. instrumental musicians, again with R/L (0-split) and S/M (+/- 90)
+
+### Load data from input file
+```{r}
+## Load and display input data
+study <- "christman_1993"
+input <- load_input(str_c(study, ".csv"))
+pretty_table(input, title = str_c(study, ".csv"))
+```
+
+### Calculate effect sizes
+Odds ratio results (For independent vs. integrated instrument players; to report separately)
+```{r}
+sub <- input %>%
+  filter(!is.na(n_left_control))
+```
+```{r, results = "markup", cache = T}
+es_study <- calculate_es(sub, study, OR = T, RR = T, freq = F)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```
+
+Frequency results
+```{r}
+sub <- input %>%
+  filter(is.na(n_left_control))
+```
+```{r, results = "markup", cache = T}
+es_study <- calculate_es(sub, study, OR = F, RR = F, freq = T)
+```
+```{r}
+## Display study results
+es_study %>% display_study_es()
+
+## Add study results to full results table
+es <- es %>% add_row(es_study)
+```

@@ -1,0 +1,19 @@
+pop,profession,creative_group,control_group,h,rl_sm,comparison_details,n_creative,n_left_creative,n_control,n_left_control,pref_success,include,exclude_rnr
+Faculty,Art,Art,Law,1i_3pt,S/M,(SR+SL)/M,31,1,26,2,mix,0,0
+Faculty,Art,Art,Psychology,1i_3pt,S/M,(SR+SL)/M,31,1,29,0,mix,0,0
+Faculty,Art,Art,"Law, Psychology",1i_3pt,S/M,(SR+SL)/M,31,1,55,2,mix,1,0
+Faculty,Architecture,Architecture,Law,1i_3pt,S/M,(SR+SL)/M,23,0,26,2,mix,0,0
+Faculty,Architecture,Architecture,Psychology,1i_3pt,S/M,(SR+SL)/M,23,0,29,0,mix,0,0
+Faculty,Architecture,Architecture,"Law, Psychology",1i_3pt,S/M,(SR+SL)/M,23,0,55,2,mix,1,0
+Faculty,Art,Art,Law,1i_3pt,S/M,SR/(M + SL),31,2,26,6,mix,0,1
+Faculty,Art,Art,Psychology,1i_3pt,S/M,SR/(M + SL),31,2,29,1,mix,0,1
+Faculty,Art,Art,"Law, Psychology",1i_3pt,S/M,SR/(M + SL),31,2,55,7,mix,1,1
+Faculty,Architecture,Architecture,Law,1i_3pt,S/M,SR/(M + SL),23,1,26,6,mix,0,1
+Faculty,Architecture,Architecture,Psychology,1i_3pt,S/M,SR/(M + SL),23,1,29,1,mix,0,1
+Faculty,Architecture,Architecture,"Law, Psychology",1i_3pt,S/M,SR/(M + SL),23,1,55,7,mix,1,1
+Faculty,Art,Art,Law,1i_3pt,R/L,SR/SL,30,1,24,4,mix,0,0
+Faculty,Art,Art,Psychology,1i_3pt,R/L,SR/SL,30,1,29,1,mix,0,0
+Faculty,Art,Art,"Law, Psychology",1i_3pt,R/L,SR/SL,30,1,53,5,mix,1,0
+Faculty,Architecture,Architecture,Law,1i_3pt,R/L,SR/SL,23,1,24,4,mix,0,0
+Faculty,Architecture,Architecture,Psychology,1i_3pt,R/L,SR/SL,23,1,29,1,mix,0,0
+Faculty,Architecture,Architecture,"Law, Psychology",1i_3pt,R/L,SR/SL,23,1,53,5,mix,1,0

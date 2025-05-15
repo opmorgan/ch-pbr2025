@@ -1,0 +1,169 @@
+<!-- Dependencies: tidyverse, psych, common/pretty_table.R, gt -->
+
+Burke, B. F., Chrisler, J. C., & Devlin, A. S. (1989). The creative thinking, environmental frustration, and self‐concept of left‐ and right‐handers. Creativity Research Journal, 2(4), 279–285. https://doi.org/10.1080/10400418909534324
+
+In Table 1, the authors report Means and SD for right and left handers on each subscore.
+
+```{r}
+study <- "burke_1989"
+task <- "TTCT(F)"
+```
+
+```{r}
+handedness_measure <- "Self-ID"
+rl_sm <- "R/L"
+es_type <- "d"
+```
+
+```{r}
+## Load data
+input_filename <- "burke_1989_ttct-f.csv"
+input_path <- here(extract_dir, "data", "input", input_filename)
+input <- read_csv(input_path)
+## Display data
+pretty_table(input, title = input_filename)
+```
+
+```{r}
+## Get n for each group from input file
+## (because n is the same for all measures)
+n_input <- data.frame(right = NA, left = NA)
+for (h in c("right", "left")) {
+  unique_n <- input %>% filter(handedness == h) %>% .[["n"]] %>% unique()
+  if (length(unique_n == 1)) {
+    n_input[[h]]  <- unique_n %>% first()
+  } else {
+    stop(str_c(study, ", ", task,
+      ": unexpected multiple values for n (right handers) in input file"))
+  }
+}
+
+n_right <- n_input$right
+n_left <- n_input$left
+str_c(n_right, ", ", n_left)
+```
+
+```{r}
+measure <- "Fluency"
+m1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["mean"]]
+m2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["mean"]]
+sd1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["sd"]]
+sd2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["sd"]]
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_right, n2 = n_left, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_right, n2 = n_left,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+```{r}
+measure <- "Flexibility"
+m1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["mean"]]
+m2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["mean"]]
+sd1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["sd"]]
+sd2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["sd"]]
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_right, n2 = n_left, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_right, n2 = n_left,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+```{r}
+measure <- "Originality"
+m1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["mean"]]
+m2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["mean"]]
+sd1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["sd"]]
+sd2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["sd"]]
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_right, n2 = n_left, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_right, n2 = n_left,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```
+```{r}
+measure <- "Elaboration"
+m1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["mean"]]
+m2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["mean"]]
+sd1 <- input %>%
+  filter(handedness == "right" & ttct_measure == measure) %>%
+  .[["sd"]]
+sd2 <- input %>%
+  filter(handedness == "left" & ttct_measure == measure) %>%
+  .[["sd"]]
+
+d <- msd_to_d(m1 = m1, m2 = m2, sd1 = sd1, sd2 = sd2)
+
+esci <- psych::cohen.d.ci(d = d, n1 = n_right, n2 = n_left, alpha = .05) %>%
+  as_tibble()
+
+es <- es %>%
+  add_row(study = study, task = task, measure = measure, es_type = es_type,
+          lower = esci$lower, effect = esci$effect, upper = esci$upper,
+          n1 = n_right, n2 = n_left,
+          h = handedness_measure, rl_sm = rl_sm,
+          notes = "From Ms, SDs, Ns",
+          include = 1
+          )
+
+esci %>% pretty_table(title = str_c(study, ", ", task, ": ", measure))
+```

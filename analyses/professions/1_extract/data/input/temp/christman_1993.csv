@@ -1,0 +1,7 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Faculty,Music,Instrumental musicians (“Integrated”),NA,R/L,82,NA,12,NA,EHI,success,0-split,1,0
+Faculty,Music,Instrumental musicians (“Independent”),NA,R/L,81,NA,9,NA,EHI,success,0-split,1,0
+Faculty,Music,Instrumental musicians (“Integrated”),NA,S/M,82,NA,59,NA,EHI,success,SR/(M+SL),1,0
+Faculty,Music,Instrumental musicians (“Independent”),NA,S/M,81,NA,42,NA,EHI,success,SR/(M+SL),1,0
+Faculty,Music,Instrumental musicians (“Integrated”),Instrumental musicians (“Independent”),R/L,82,81,12,9,EHI,success,0-split,0,0
+Faculty,Music,Instrumental musicians (“Integrated”),Instrumental musicians (“Independent”),S/M,82,81,59,42,EHI,success,SR/(M+SL),0,0

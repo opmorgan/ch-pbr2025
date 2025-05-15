@@ -1,0 +1,5 @@
+pop,profession,creative_group,control_group,rl_sm,n_creative,n_control,n_left_creative,n_left_control,h,pref_success,comparison_details,include,exclude_rnr
+Students,Music,Singers,General students,R/L,109,678,7,38,EHI,preference,SR/SL,1,0
+Students,Music,Instrumental musicians,General students,R/L,75,678,3,38,EHI,preference,SR/SL,1,0
+Students,Music,Singers,General students,S/M,134,864,25,186,EHI,preference,(SR+SL)/M,1,0
+Students,Music,Instrumental musicians,General students,S/M,108,864,33,186,EHI,preference,(SR+SL)/M,1,0
