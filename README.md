@@ -1,4 +1,8 @@
-This repository contains data and analysis code for the anonymous manuscript, "Handedness and Creativity: Facts and Fictions."
+This repo contains data, analysis scripts, task scripts, and figures for the paper:
+
+Morgan, O. P., Zhao, Siyi, and Casasanto, D. (2025). Handedness and creativity: Facts and fictions. _Psychonomic Bulletin & Review_.
+
+This repo is archived at: [https://osf.io/mc5gy](https://osf.io/xhpjy/)
 
 # Setup and dependencies
 
